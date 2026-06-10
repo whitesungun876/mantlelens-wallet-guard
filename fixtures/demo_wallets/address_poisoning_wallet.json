@@ -1,0 +1,182 @@
+{
+  "fixtureId": "address_poisoning_wallet",
+  "description": "Replay benchmark case: address poisoning signal from a tiny lookalike transfer with bounded history coverage.",
+  "dataMode": "demo",
+  "chainId": 5000,
+  "wallet": {
+    "address": "0x1000000000000000000000000000000000000104",
+    "walletHash": "0xwallet_hash_replay_poisoning_001"
+  },
+  "dataCompleteness": {
+    "nativeBalance": "available",
+    "knownTokenBalances": "available",
+    "fullTokenInventory": "not_supported_p0",
+    "approvalEvents": "available",
+    "activeAllowanceConfirmation": "available",
+    "transactionHistory": "partial",
+    "transferLogs": "available",
+    "spenderLabels": "available",
+    "tokenSecurity": "available",
+    "defiPositions": "not_supported_p0",
+    "rwaYieldExposure": "available"
+  },
+  "sourceAvailability": {
+    "mantleRpc": {
+      "status": "available",
+      "limitation": "Known-token balances and bounded transfer logs are available in this replay case."
+    },
+    "goPlus": {
+      "status": "available",
+      "limitation": "Clean result is a signal, not a guarantee."
+    },
+    "coinGecko": {
+      "status": "available",
+      "limitation": "Price-only source."
+    },
+    "moralis": {
+      "status": "partial",
+      "limitation": "Replay fixture models bounded indexed wallet history."
+    },
+    "etherscanV2": {
+      "status": "partial",
+      "limitation": "Replay fixture models bounded transfer pages."
+    }
+  },
+  "balances": [
+    {
+      "symbol": "MNT",
+      "tokenAddress": "native",
+      "balanceRaw": "42000000000000000000",
+      "balance": 42,
+      "priceUsd": 1.1,
+      "valueUsd": 46.2,
+      "evidenceId": "ev_poison_mnt_balance"
+    },
+    {
+      "symbol": "USDC",
+      "tokenAddress": "0x0000000000000000000000000000000000000a01",
+      "balanceRaw": "700000000",
+      "balance": 700,
+      "priceUsd": 1,
+      "valueUsd": 700,
+      "evidenceId": "ev_poison_usdc_balance"
+    },
+    {
+      "symbol": "USDT",
+      "tokenAddress": "0x0000000000000000000000000000000000000a04",
+      "balanceRaw": "550000000",
+      "balance": 550,
+      "priceUsd": 1,
+      "valueUsd": 550,
+      "evidenceId": "ev_poison_usdt_balance"
+    }
+  ],
+  "approvals": [
+    {
+      "token": "USDC",
+      "tokenAddress": "0x0000000000000000000000000000000000000a01",
+      "spender": "0x2000000000000000000000000000000000000104",
+      "spenderLabel": "known_router",
+      "allowanceRaw": "0",
+      "allowanceUsd": 0,
+      "isUnlimited": false,
+      "isActive": false,
+      "source": "rpc_logs_allowance",
+      "dataCoverage": "known_token_only",
+      "evidenceId": "ev_poison_usdc_allowance"
+    }
+  ],
+  "transfers": [
+    {
+      "transferId": "transfer_poison_dust_lookalike",
+      "transferType": "dust",
+      "token": "MNT",
+      "amount": "0.000001",
+      "direction": "incoming",
+      "counterparty": "0x10000000000000000000000000000000000001O4",
+      "pattern": "lookalike_address_dust",
+      "riskLevel": "High",
+      "blockNumber": 39695012,
+      "txHash": "0xpoisoningtransfer000000000000000000000000000000000000000001",
+      "evidenceId": "ev_poison_transfer_dust"
+    }
+  ],
+  "rwaYieldExposure": {
+    "mETHPct": 0,
+    "cmETHPct": 0,
+    "usdYPct": 0,
+    "mUSDPct": 0,
+    "liquidityWarning": false,
+    "evidenceIds": []
+  },
+  "evidence": [
+    {
+      "evidenceId": "ev_poison_usdc_balance",
+      "type": "balance",
+      "claimText": "USDC current balance was read from the known-token inventory.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.balanceOf",
+      "rawData": {
+        "balanceRaw": "700000000"
+      },
+      "timestamp": "2026-06-08T00:00:00Z",
+      "evidenceHash": "0xev_poison_usdc_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "Replay fixture."
+    },
+    {
+      "evidenceId": "ev_poison_usdc_allowance",
+      "type": "approval",
+      "claimText": "USDC approval was checked and current allowance is zero.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.allowance",
+      "rawData": {
+        "allowanceRaw": "0"
+      },
+      "timestamp": "2026-06-08T00:00:00Z",
+      "evidenceHash": "0xev_poison_usdc_allowance_hash",
+      "dataQuality": "mock",
+      "limitation": "Allowance confirmation is required before declaring an approval inactive."
+    },
+    {
+      "evidenceId": "ev_poison_usdt_balance",
+      "type": "balance",
+      "claimText": "USDT current balance was read from the known-token inventory.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.balanceOf",
+      "rawData": {
+        "balanceRaw": "550000000"
+      },
+      "timestamp": "2026-06-08T00:00:00Z",
+      "evidenceHash": "0xev_poison_usdt_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "Replay fixture."
+    },
+    {
+      "evidenceId": "ev_poison_transfer_dust",
+      "type": "transfer",
+      "claimText": "A tiny incoming transfer came from a lookalike address and may be an address poisoning candidate.",
+      "source": "Etherscan V2 replay",
+      "endpoint": "account:tokentx",
+      "rawData": {
+        "amount": "0.000001",
+        "counterparty": "0x10000000000000000000000000000000000001O4",
+        "pattern": "lookalike_address_dust"
+      },
+      "txHash": "0xpoisoningtransfer000000000000000000000000000000000000000001",
+      "blockNumber": 39695012,
+      "timestamp": "2026-06-08T00:00:00Z",
+      "evidenceHash": "0xev_poison_transfer_dust_hash",
+      "dataQuality": "mock",
+      "limitation": "Replay fixture uses bounded transfer history; this is not a real explorer transaction."
+    }
+  ],
+  "expectedAssessment": {
+    "assessmentId": "assessment_demo_poisoning_001",
+    "walletRiskScore": 34,
+    "riskLevel": "High",
+    "dataConfidence": 0.74,
+    "dataCoverage": "bounded-transfer-history",
+    "assessmentHash": "0xassessment_demo_poisoning_001_hash"
+  }
+}

@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MantleLens Wallet Guard Mock Workspace</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7f8;
+        --surface: #ffffff;
+        --surface-2: #eef3f1;
+        --ink: #17201d;
+        --muted: #5f6d67;
+        --line: #d7dedb;
+        --teal: #127c73;
+        --red: #b8372c;
+        --amber: #a56312;
+        --green: #1d7a4d;
+        --blue: #315d93;
+        --shadow: 0 10px 30px rgba(20, 30, 28, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: 58px 1fr;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 0 20px;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .brand strong {
+        font-size: 15px;
+      }
+
+      .brand span,
+      .meta span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 9px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: 300px minmax(520px, 1fr) 360px;
+        gap: 16px;
+        padding: 16px;
+      }
+
+      aside,
+      section {
+        min-width: 0;
+      }
+
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .panel + .panel {
+        margin-top: 14px;
+      }
+
+      .panel-head {
+        padding: 14px 14px 10px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h2 {
+        font-size: 14px;
+      }
+
+      h3 {
+        font-size: 13px;
+      }
+
+      .panel-body {
+        padding: 14px;
+      }
+
+      .wallet-input {
+        display: grid;
+        gap: 10px;
+      }
+
+      input {
+        width: 100%;
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 0 10px;
+        color: var(--ink);
+        background: var(--surface);
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      button {
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fbfbfa;
+        color: var(--ink);
+        cursor: default;
+      }
+
+      .primary {
+        background: var(--teal);
+        color: #fff;
+        border-color: var(--teal);
+      }
+
+      .timeline {
+        display: grid;
+        gap: 10px;
+      }
+
+      .step {
+        display: grid;
+        grid-template-columns: 26px 1fr;
+        gap: 8px;
+        align-items: start;
+        font-size: 13px;
+      }
+
+      .dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: inline-grid;
+        place-items: center;
+        color: #fff;
+        background: var(--teal);
+        font-size: 11px;
+      }
+
+      .step small {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 1fr 1fr;
+        gap: 12px;
+      }
+
+      .metric {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+        min-height: 86px;
+        background: #fff;
+      }
+
+      .metric span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 8px;
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .metric .risk {
+        color: var(--red);
+      }
+
+      .banner {
+        margin-top: 12px;
+        padding: 11px 12px;
+        border-radius: 8px;
+        background: #fff7e8;
+        border: 1px solid #efc985;
+        color: #5e4218;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .risk-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .risk-row {
+        display: grid;
+        grid-template-columns: 32px 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 11px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      .rank {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: inline-grid;
+        place-items: center;
+        background: #f3e7df;
+        color: var(--red);
+        font-weight: 700;
+      }
+
+      .risk-row p {
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .risk-row small {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .pill {
+        min-width: 72px;
+        text-align: center;
+        border-radius: 999px;
+        padding: 5px 8px;
+        font-size: 12px;
+        border: 1px solid transparent;
+      }
+
+      .pill.high {
+        color: var(--red);
+        background: #fae9e7;
+        border-color: #edc5c1;
+      }
+
+      .pill.pending {
+        color: var(--amber);
+        background: #fff7e8;
+        border-color: #efc985;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 8px;
+        padding: 0 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .tab {
+        min-height: 42px;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background: transparent;
+        border-radius: 0;
+        color: var(--muted);
+      }
+
+      .tab.active {
+        color: var(--teal);
+        border-bottom-color: var(--teal);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 12px;
+      }
+
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", monospace;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+
+      .drawer-stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .evidence {
+        display: grid;
+        gap: 10px;
+      }
+
+      .evidence-item {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        background: #fff;
+      }
+
+      .evidence-item p {
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .evidence-item small {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+      }
+
+      .action-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .action-row {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        background: #fbfbfa;
+      }
+
+      .action-row strong {
+        font-size: 13px;
+      }
+
+      .action-row small {
+        color: var(--muted);
+        display: block;
+        margin-top: 5px;
+      }
+
+      @media (max-width: 1120px) {
+        main {
+          grid-template-columns: 280px 1fr;
+        }
+
+        .right {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 760px) {
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+          height: auto;
+          padding: 12px 14px;
+        }
+
+        main {
+          grid-template-columns: 1fr;
+          padding: 12px;
+        }
+
+        .summary-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <div class="brand">
+          <strong>MantleLens Wallet Guard</strong>
+          <span>Evidence-grounded wallet risk agent for Mantle</span>
+        </div>
+        <div class="meta">
+          <span class="badge">Demo fixture</span>
+          <span class="badge">View-only</span>
+          <span class="badge">Simulation-only</span>
+          <span>chainId 5000</span>
+        </div>
+      </header>
+
+      <main>
+        <aside class="left">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Wallet Input</h2>
+            </div>
+            <div class="panel-body wallet-input">
+              <input id="walletInput" aria-label="Wallet address" />
+              <div class="actions">
+                <button class="primary">Scan</button>
+                <button>Connect</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Agent Feed</h2>
+            </div>
+            <div class="panel-body timeline" id="timeline"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Quick Actions</h2>
+            </div>
+            <div class="panel-body action-list" id="actions"></div>
+          </div>
+        </aside>
+
+        <section class="center">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Wallet Risk Summary</h2>
+            </div>
+            <div class="panel-body">
+              <div class="summary-grid">
+                <div class="metric">
+                  <span>Wallet Risk Score</span>
+                  <strong class="risk" id="score">68</strong>
+                </div>
+                <div class="metric">
+                  <span>Risk Level</span>
+                  <strong class="risk" id="riskLevel">High</strong>
+                </div>
+                <div class="metric">
+                  <span>Confidence</span>
+                  <strong id="confidence">0.85</strong>
+                </div>
+                <div class="metric">
+                  <span>On-chain Record</span>
+                  <strong id="recordState">Queued</strong>
+                </div>
+              </div>
+              <div class="banner" id="coverage"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Top Risks</h2>
+            </div>
+            <div class="panel-body risk-list" id="risks"></div>
+          </div>
+
+          <div class="panel">
+            <div class="tabs" aria-label="Risk panels">
+              <button class="tab active">Approvals</button>
+              <button class="tab">Transfers</button>
+              <button class="tab">Portfolio</button>
+              <button class="tab">RWA / Yield</button>
+            </div>
+            <div class="panel-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Token</th>
+                    <th>Spender</th>
+                    <th>Amount</th>
+                    <th>USD at Risk</th>
+                    <th>Evidence</th>
+                  </tr>
+                </thead>
+                <tbody id="approvalRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <aside class="right">
+          <div class="drawer-stack">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>Evidence Detail</h2>
+              </div>
+              <div class="panel-body evidence" id="evidence"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2>Trace Inspector</h2>
+              </div>
+              <div class="panel-body">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>State</th>
+                      <th>Policy</th>
+                    </tr>
+                  </thead>
+                  <tbody id="traceRows"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2>Benchmark History</h2>
+              </div>
+              <div class="panel-body">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Assessment</th>
+                      <th>Score</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="mono">assessment_demo_high_001</td>
+                      <td>68</td>
+                      <td><span class="pill pending">Queued</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script>
+      const fixture = {
+        wallet: {
+          address: "0x1000000000000000000000000000000000000003",
+          walletHash: "0xwallet_hash_high_001",
+        },
+        expectedAssessment: {
+          walletRiskScore: 68,
+          riskLevel: "High",
+          dataConfidence: 0.85,
+          dataCoverage: "partial",
+          onChainRecord: { status: "queued" },
+          topRisks: [
+            {
+              riskId: "risk_high_unlimited_approval",
+              type: "approval",
+              severity: "High",
+              claimText:
+                "USDT has an active unlimited approval to an unknown spender.",
+              evidenceIds: ["ev_high_unlimited_approval", "ev_high_usdt_balance"],
+            },
+            {
+              riskId: "risk_high_dust_transfer",
+              type: "transfer",
+              severity: "High",
+              claimText:
+                "A tiny incoming transfer from a lookalike address may be address poisoning.",
+              evidenceIds: ["ev_high_dust_transfer"],
+            },
+            {
+              riskId: "risk_high_meth_cmeth_exposure",
+              type: "rwa_yield",
+              severity: "High",
+              claimText:
+                "mETH and cmETH make up a large part of the known-token portfolio.",
+              evidenceIds: [
+                "ev_high_meth_balance",
+                "ev_high_cmeth_balance",
+                "ev_high_rwa_rule",
+              ],
+            },
+          ],
+          suggestedActions: [
+            {
+              actionType: "SIMULATE_REVOKE_APPROVAL",
+              label: "Simulate revoke impact for USDT approval",
+              executionMode: "simulation_only",
+            },
+            {
+              actionType: "MARK_ADDRESS_SUSPICIOUS",
+              label: "Mark lookalike counterparty as suspicious",
+              executionMode: "view_only",
+            },
+            {
+              actionType: "SIMULATE_REDUCE_METH_INCREASE_MUSD",
+              label: "Simulate lower mETH/cmETH exposure",
+              executionMode: "simulation_only",
+            },
+          ],
+        },
+        approvals: [
+          {
+            token: "USDT",
+            spender: "0x9999999999999999999999999999999999999999",
+            allowanceRaw: "MAX_UINT256",
+            allowanceUsd: 6200,
+            isUnlimited: true,
+            evidenceId: "ev_high_unlimited_approval",
+          },
+        ],
+        evidence: [
+          {
+            evidenceId: "ev_high_unlimited_approval",
+            source: "Mantle RPC",
+            endpoint: "ERC20.allowance",
+            claimText:
+              "USDT has an active unlimited approval to an unknown spender.",
+            limitation:
+              "Approval event was followed by allowance confirmation.",
+          },
+          {
+            evidenceId: "ev_high_dust_transfer",
+            source: "Mantle RPC",
+            endpoint: "eth_getLogs Transfer",
+            claimText: "A tiny incoming transfer came from a lookalike address.",
+            limitation: "Recent known-token transfer logs only.",
+          },
+          {
+            evidenceId: "ev_high_rwa_rule",
+            source: "RWA/Yield Module",
+            endpoint: "rule:rwa_yield_exposure",
+            claimText:
+              "mETH and cmETH concentration triggers a Mantle yield exposure warning.",
+            limitation:
+              "P0 partially verifies RWA/yield context and does not provide yield advice.",
+          },
+        ],
+      };
+
+      const states = [
+        ["DATA_GATHERING", "Mantle RPC known-token scan"],
+        ["RISK_EVALUATING", "White-box scoring"],
+        ["EVIDENCE_BINDING", "All top risks linked"],
+        ["EXPLAINING", "LLM or rule fallback"],
+        ["COMMIT_PENDING", "Assessment hash queued"],
+      ];
+
+      document.getElementById("walletInput").value = fixture.wallet.address;
+      document.getElementById("score").textContent =
+        fixture.expectedAssessment.walletRiskScore;
+      document.getElementById("riskLevel").textContent =
+        fixture.expectedAssessment.riskLevel;
+      document.getElementById("confidence").textContent =
+        fixture.expectedAssessment.dataConfidence.toFixed(2);
+      document.getElementById("recordState").textContent = "Queued";
+      document.getElementById("coverage").textContent =
+        "Partial wallet scan: using Mantle RPC known-token scan and GoPlus security signals. Full wallet history and unknown-token discovery require indexed APIs.";
+
+      document.getElementById("timeline").innerHTML = states
+        .map(
+          ([state, note], index) => `
+            <div class="step">
+              <span class="dot">${index + 1}</span>
+              <div><strong>${state}</strong><small>${note}</small></div>
+            </div>`,
+        )
+        .join("");
+
+      document.getElementById("risks").innerHTML =
+        fixture.expectedAssessment.topRisks
+          .map(
+            (risk, index) => `
+              <div class="risk-row">
+                <span class="rank">${index + 1}</span>
+                <div>
+                  <p>${risk.claimText}</p>
+                  <small>${risk.evidenceIds.join(", ")}</small>
+                </div>
+                <span class="pill high">${risk.severity}</span>
+              </div>`,
+          )
+          .join("");
+
+      document.getElementById("actions").innerHTML =
+        fixture.expectedAssessment.suggestedActions
+          .map(
+            (action) => `
+              <div class="action-row">
+                <strong>${action.label}</strong>
+                <small>${action.executionMode.replace("_", "-")}</small>
+              </div>`,
+          )
+          .join("");
+
+      document.getElementById("approvalRows").innerHTML = fixture.approvals
+        .map(
+          (approval) => `
+            <tr>
+              <td>${approval.token}</td>
+              <td class="mono">${approval.spender}</td>
+              <td>${approval.allowanceRaw}</td>
+              <td>$${approval.allowanceUsd.toLocaleString()}</td>
+              <td class="mono">${approval.evidenceId}</td>
+            </tr>`,
+        )
+        .join("");
+
+      document.getElementById("evidence").innerHTML = fixture.evidence
+        .map(
+          (item) => `
+            <div class="evidence-item">
+              <h3 class="mono">${item.evidenceId}</h3>
+              <p>${item.claimText}</p>
+              <small>${item.source} · ${item.endpoint}</small>
+              <small>${item.limitation}</small>
+            </div>`,
+        )
+        .join("");
+
+      document.getElementById("traceRows").innerHTML = states
+        .map(
+          ([state]) => `
+            <tr>
+              <td class="mono">${state}</td>
+              <td>allow</td>
+            </tr>`,
+        )
+        .join("");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,178 @@
+{
+  "fixtureId": "low_risk_wallet",
+  "description": "Healthy demo wallet with diversified known-token balances and no active risky approvals.",
+  "dataMode": "demo",
+  "chainId": 5000,
+  "wallet": {
+    "address": "0x1000000000000000000000000000000000000001",
+    "walletHash": "0xwallet_hash_low_001"
+  },
+  "dataCompleteness": {
+    "nativeBalance": "available",
+    "knownTokenBalances": "available",
+    "fullTokenInventory": "not_supported_p0",
+    "approvalEvents": "available",
+    "activeAllowanceConfirmation": "available",
+    "transactionHistory": "partial",
+    "transferLogs": "available",
+    "spenderLabels": "available",
+    "tokenSecurity": "available",
+    "defiPositions": "not_supported_p0",
+    "rwaYieldExposure": "available"
+  },
+  "sourceAvailability": {
+    "mantleRpc": {
+      "status": "available",
+      "limitation": "Known-token allowlist and bounded log window only."
+    },
+    "goPlus": {
+      "status": "available",
+      "limitation": "Clean result is a signal, not a guarantee."
+    },
+    "coinGecko": {
+      "status": "available",
+      "limitation": "Price-only source."
+    },
+    "moralis": {
+      "status": "unavailable",
+      "limitation": "No API key configured for P0."
+    }
+  },
+  "balances": [
+    {
+      "symbol": "MNT",
+      "tokenAddress": "native",
+      "balanceRaw": "120000000000000000000",
+      "balance": 120,
+      "priceUsd": 1.1,
+      "valueUsd": 132,
+      "evidenceId": "ev_low_mnt_balance"
+    },
+    {
+      "symbol": "USDC",
+      "tokenAddress": "0x0000000000000000000000000000000000000a01",
+      "balanceRaw": "950000000",
+      "balance": 950,
+      "priceUsd": 1,
+      "valueUsd": 950,
+      "evidenceId": "ev_low_usdc_balance"
+    },
+    {
+      "symbol": "mETH",
+      "tokenAddress": "0x0000000000000000000000000000000000000a02",
+      "balanceRaw": "120000000000000000",
+      "balance": 0.12,
+      "priceUsd": 3600,
+      "valueUsd": 432,
+      "evidenceId": "ev_low_meth_balance"
+    }
+  ],
+  "approvals": [
+    {
+      "token": "USDC",
+      "tokenAddress": "0x0000000000000000000000000000000000000a01",
+      "spender": "0x2000000000000000000000000000000000000001",
+      "spenderLabel": "known_router",
+      "allowanceRaw": "0",
+      "allowanceUsd": 0,
+      "isUnlimited": false,
+      "isActive": false,
+      "source": "rpc_logs_allowance",
+      "dataCoverage": "known_token_only",
+      "evidenceId": "ev_low_usdc_allowance"
+    }
+  ],
+  "transfers": [],
+  "evidence": [
+    {
+      "evidenceId": "ev_low_mnt_balance",
+      "type": "balance",
+      "claimText": "MNT balance was read from Mantle RPC.",
+      "source": "Mantle RPC",
+      "endpoint": "eth_getBalance",
+      "rawData": {
+        "balanceRaw": "120000000000000000000"
+      },
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_low_mnt_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "Demo fixture."
+    },
+    {
+      "evidenceId": "ev_low_usdc_balance",
+      "type": "balance",
+      "claimText": "USDC balance was read from the known-token allowlist.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.balanceOf",
+      "rawData": {
+        "balanceRaw": "950000000"
+      },
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_low_usdc_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "Known-token allowlist only."
+    },
+    {
+      "evidenceId": "ev_low_meth_balance",
+      "type": "balance",
+      "claimText": "mETH exposure is below the P0 warning threshold.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.balanceOf",
+      "rawData": {
+        "balanceRaw": "120000000000000000"
+      },
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_low_meth_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "Demo fixture."
+    },
+    {
+      "evidenceId": "ev_low_usdc_allowance",
+      "type": "approval",
+      "claimText": "USDC approval is not active because allowance is zero.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.allowance",
+      "rawData": {
+        "allowanceRaw": "0"
+      },
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_low_usdc_allowance_hash",
+      "dataQuality": "mock",
+      "limitation": "Approval events alone are not enough; allowance confirmation is used."
+    }
+  ],
+  "expectedAssessment": {
+    "assessmentId": "assessment_demo_low_001",
+    "walletRiskScore": 16,
+    "riskLevel": "Low",
+    "dataConfidence": 0.86,
+    "subScores": {
+      "approvalRisk": 0,
+      "suspiciousTransferRisk": 0,
+      "assetConcentrationRisk": 20,
+      "defiExposureStub": 0,
+      "rwaYieldRisk": 10
+    },
+    "topRisks": [
+      {
+        "riskId": "risk_low_partial_inventory",
+        "type": "data_quality",
+        "severity": "Moderate",
+        "claimText": "Full token inventory is not supported in P0, so unknown tokens are not covered.",
+        "scoreImpact": 0,
+        "evidenceIds": ["ev_low_usdc_balance"]
+      }
+    ],
+    "suggestedActions": [
+      {
+        "actionId": "act_low_record",
+        "actionType": "RECORD_ASSESSMENT_ONLY",
+        "label": "Record assessment only",
+        "executionMode": "view_only",
+        "evidenceIds": ["ev_low_usdc_balance"]
+      }
+    ],
+    "dataCoverage": "known-token-only",
+    "assessmentHash": "0xassessment_demo_low_001_hash"
+  }
+}

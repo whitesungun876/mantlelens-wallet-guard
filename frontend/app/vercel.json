@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://mantlelens-wallet-guard-production.up.railway.app/api/:path*"
+    },
+    {
+      "source": "/mcp",
+      "destination": "https://mantlelens-wallet-guard-production.up.railway.app/mcp"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
+  ]
+}

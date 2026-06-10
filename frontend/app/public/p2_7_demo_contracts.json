@@ -1,0 +1,521 @@
+{
+  "chainId": 5003,
+  "contracts": {
+    "AssessmentLogger": {
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "assessmentHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "walletHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "signer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "evidenceBundleHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "recommendationHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "walletRiskScoreBps",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "riskLevel",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "decisionType",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "actionType",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "assessmentURI",
+              "type": "string"
+            }
+          ],
+          "name": "AssessmentRecorded",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "assessmentHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "walletHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "evidenceBundleHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "recommendationHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "walletRiskScoreBps",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "riskLevel",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "decisionType",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "actionType",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "assessmentURI",
+              "type": "string"
+            }
+          ],
+          "name": "recordAssessment",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "recordId",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "name": "records",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "signer",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "walletHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "evidenceBundleHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "recommendationHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "walletRiskScoreBps",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "riskLevel",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "decisionType",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "actionType",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "assessmentURI",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "recordedAt",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ],
+      "bytecode": "0x6080806040523461001657610a5d908161001b8239f35b5f80fdfe60c06040526004361015610011575f80fd5b5f3560e01c806301e647251461077657632f96bc031461002f575f80fd5b34610772576101203660031901126107725760a4356001600160401b03811161077257610060903690600401610995565b60c4356001600160401b0381116107725761007f903690600401610995565b60e4929192356001600160401b038111610772576100a1903690600401610995565b9190610104356001600160401b038111610772576100c3903690600401610995565b939092604051976020890160043581523360601b60408b015260348a528960608101106001600160401b0360608c01111761050c5760608a01604052895190209660608a016101a08b01106001600160401b036101a08c01111761050c576101a08a016040523360608b015260243560808b015260443560a08b015260643560c08b015260843560e08b015261015a3682846109c2565b6101008b0190815261016d36858c6109c2565b6101208c015261017e3686886109c2565b6101408c015261018f3689896109c2565b6101608c0152426101808c01525f89815260208190526040902060608c015181546001600160a01b0319166001600160a01b039190911617815560808c0151600182015560a08c0151600282015560c08c0151600382015560e08c0151600482015590518051906001600160401b03821161050c578190610213600585015461085d565b601f8111610722575b50602090601f83116001146106b7575f926106ac575b50508160011b915f199060031b1c19161760058201555b6101208b01518051906001600160401b03821161050c57819061026f600685015461085d565b601f811161065c575b50602090601f83116001146105f1575f926105e6575b50508160011b915f199060031b1c19161760068201555b6101408b01518051906001600160401b03821161050c5781906102cb600785015461085d565b601f8111610596575b50602090601f831160011461052b575f92610520575b50508160011b915f199060031b1c19161760078201555b6101608b015180608052519a6001600160401b038c1161050c57610328600883015461085d565b9b601f8d116104c4575b60209c508c601f821160011461041957946103d79460609c9d9460096101807fdd305beeffc8f187c15d925e87802d556575a79fae031a9bbf1bb7cf690b5e529c9a96866103c9976103e59e9c5f9161040c575b508160011b915f199060031b1c19161760088501555b015191015560e06040519d8e604435815260643560208201526084356040820152015260e08d0191610a07565b918a830360808c0152610a07565b9187830360a0890152610a07565b9380850360c08201528061040133966024359660043596610a07565b0390a4604051908152f35b905060805101515f610386565b600884015f528d5f20905f60805160a0525b601f19841681106104ab57509460609c9d9460096101807fdd305beeffc8f187c15d925e87802d556575a79fae031a9bbf1bb7cf690b5e529c9a966001876103e59e9c976103d79c6103c99a601f19811610610491575b5050811b01600885015561039c565b60a05101515f1960f88460031b161c191690555f80610482565b90918f600181928560a05101518155019301910161042b565b600883015f5260205f20601f820160051c810160208310610505575b601f8f5b0160051c820181106104f7575050610332565b5f8155600101601f8f6104e4565b50806104e0565b634e487b7160e01b5f52604160045260245ffd5b015190505f806102ea565b600785015f908152602081209350601f198516905b81811061057e5750908460019594939210610566575b505050811b016007820155610301565b01515f1960f88460031b161c191690555f8080610556565b92936020600181928786015181550195019301610540565b909150600784015f5260205f20601f840160051c8101602085106105df575b90849392915b601f830160051c820181106105d15750506102d4565b5f81558594506001016105bb565b50806105b5565b015190505f8061028e565b600685015f908152602081209350601f198516905b818110610644575090846001959493921061062c575b505050811b0160068201556102a5565b01515f1960f88460031b161c191690555f808061061c565b92936020600181928786015181550195019301610606565b909150600684015f5260205f20601f840160051c8101602085106106a5575b90849392915b601f830160051c82018110610697575050610278565b5f8155859450600101610681565b508061067b565b015190505f80610232565b600585015f908152602081209350601f198516905b81811061070a57509084600195949392106106f2575b505050811b016005820155610249565b01515f1960f88460031b161c191690555f80806106e2565b929360206001819287860151815501950193016106cc565b909150600584015f5260205f20601f840160051c81016020851061076b575b90849392915b601f830160051c8201811061075d57505061021c565b5f8155859450600101610747565b5080610741565b5f80fd5b34610772576020366003190112610772576004355f525f602052602060405f2060018060a01b03815416906108526001820154916108436002820154610835600384015461082760048601546107ce600588016108b6565b906107db600689016108b6565b936107e860078a016108b6565b9660096107f760088c016108b6565b9a01549b6040519e8f9e8f908152015260408d015260608c015260808b01526101408060a08c01528a0190610957565b9088820360c08a0152610957565b9086820360e0880152610957565b90848203610100860152610957565b906101208301520390f35b90600182811c9216801561088b575b602083101461087757565b634e487b7160e01b5f52602260045260245ffd5b91607f169161086c565b90601f801991011681019081106001600160401b0382111761050c57604052565b9060405191825f8254926108c98461085d565b9081845260019485811690815f1461093457506001146108f4575b50506108f292500383610895565b565b909391505f52602090815f20935f915b81831061091c5750506108f293508201015f806108e4565b85548884018501529485019487945091830191610904565b9150506108f294506020925060ff191682840152151560051b8201015f806108e4565b91908251928382525f5b848110610981575050825f602080949584010152601f8019910116010190565b602081830181015184830182015201610961565b9181601f84011215610772578235916001600160401b038311610772576020838186019501011161077257565b9291926001600160401b03821161050c57604051916109eb601f8201601f191660200184610895565b829481845281830111610772578281602093845f960137010152565b908060209392818452848401375f828201840152601f01601f191601019056fea2646970667358221220e683cc7d0a9daefab02b43d972f1c92f3533ac826fb9f2b4a7b55e6af639e6cd64736f6c63430008140033",
+      "methodIdentifiers": {
+        "recordAssessment(bytes32,bytes32,bytes32,bytes32,uint256,string,string,string,string)": "2f96bc03",
+        "records(bytes32)": "01e64725"
+      },
+      "source": "AssessmentLogger.sol"
+    },
+    "MantleLensDemoSpender": {
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "DemoDustSent",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "sendDust",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ],
+      "bytecode": "0x6080806040523461001657610231908161001b8239f35b5f80fdfe60806040818152600480361015610014575f80fd5b5f92833560e01c632db8c12914610029575f80fd5b346101f75760603660031901126101f7576001600160a01b039180358381169291908390036101f357602480359485168095036101ef576044359284156101c05750841561018a57855163a9059cbb60e01b8152858382015283828201526020978882604481848a5af191821561017e578192610113575b5050156100da575050847ff241e24d0a170f08260067d8e1164af518763d72e3b3e17fbfdd7c045bcbc944918551908152a35160018152f35b855162461bcd60e51b815291820187905260149082015273191d5cdd081d1c985b9cd9995c8819985a5b195960621b6044820152606490fd5b909150883d8a11610177575b601f8101601f1916820167ffffffffffffffff811183821017610164578a9183918b5281010312610160575190811515820361015d57505f806100a1565b80fd5b5080fd5b5050634e487b7160e01b82525060418352fd5b503d61011f565b508751903d90823e3d90fd5b906011606492602088519362461bcd60e51b855284015282015270726563697069656e74206973207a65726f60781b6044820152fd5b600d60649260208562461bcd60e51b85528401528201526c746f6b656e206973207a65726f60981b6044820152fd5b8680fd5b8580fd5b8380fdfea264697066735822122043aa7402fbbb241655c93189f49dc9bf7fd8913fcd78c8a1dd1d80808b2a55e864736f6c63430008140033",
+      "methodIdentifiers": {
+        "sendDust(address,address,uint256)": "2db8c129"
+      },
+      "source": "MantleLensDemoToken.sol"
+    },
+    "MantleLensDemoToken": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "initialSupply",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "allowance",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "approve",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "balanceOf",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "decimals",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "name",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "symbol",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "totalSupply",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "transfer",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "transferFrom",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ],
+      "bytecode": "0x6080346100e057601f6106de38819003918201601f19168301916001600160401b038311848410176100e4578084926020946040528339810103126100e0575133156100a757610050815f546100f8565b5f55335f52600160205260405f206100698282546100f8565b90556040519081525f7fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60203393a36040516105c4908161011a8239f35b60405162461bcd60e51b8152602060048201526011602482015270726563697069656e74206973207a65726f60781b6044820152606490fd5b5f80fd5b634e487b7160e01b5f52604160045260245ffd5b9190820180921161010557565b634e487b7160e01b5f52601160045260245ffdfe6080604081815260049182361015610015575f80fd5b5f92833560e01c91826306fdde031461038d57508163095ea7b3146102de57816318160ddd146102c157816323b872dd146101b8578163313ce5671461019c57816370a082311461016457816395d89b411461010057508063a9059cbb146100d05763dd62ed3e14610085575f80fd5b346100cc57806003193601126100cc57806020926100a161042d565b6100a9610447565b6001600160a01b0391821683526002865283832091168252845220549051908152f35b5080fd5b50346100cc57806003193601126100cc576020906100f96100ef61042d565b602435903361047e565b5160018152f35b8383346100cc57816003193601126100cc578051918183019083821067ffffffffffffffff83111761015157509261014d9382528252631353111560e21b602083015251918291826103e6565b0390f35b634e487b7160e01b815260418552602490fd5b5050346100cc5760203660031901126100cc5760209181906001600160a01b0361018c61042d565b1681526001845220549051908152f35b5050346100cc57816003193601126100cc576020905160128152f35b919050346102bd5760603660031901126102bd576101d461042d565b6101dc610447565b6044359160018060a01b03811680875260209560028752858820338952875285882054908582106102865750948096976100f996865f198203610224575b505050505061047e565b61022d9161045d565b83825260028a528282203383528a528282205582815260028952818120338252895220549086519182527f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925883393a35f8581808661021a565b865162461bcd60e51b81529081018890526011602482015270616c6c6f77616e636520746f6f206c6f7760781b6044820152606490fd5b8280fd5b5050346100cc57816003193601126100cc57602091549051908152f35b82843461038a578160031936011261038a576102f861042d565b6001600160a01b0316906024359082156103555760209450838291338152600287528181208582528752205582519081527f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925843392a35160018152f35b835162461bcd60e51b8152602081870152600f60248201526e7370656e646572206973207a65726f60881b6044820152606490fd5b80fd5b83853461038a578060031936011261038a578183019083821067ffffffffffffffff831117610151575061014d93508152601582527426b0b73a3632a632b739902232b6b7902a37b5b2b760591b602083015251918291825b602080825282518183018190529093925f5b82811061041957505060409293505f838284010152601f8019910116010190565b8181018601518482016040015285016103f8565b600435906001600160a01b038216820361044357565b5f80fd5b602435906001600160a01b038216820361044357565b9190820391821161046a57565b634e487b7160e01b5f52601160045260245ffd5b6001600160a01b0391821692919083156105555716905f82815260016020528160408220541061051e578281526001602052604081206104bf83825461045d565b905583815260016020526040812080549183830180931161050a5750556040519081527fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef90602090a3565b634e487b7160e01b81526011600452602490fd5b60405162461bcd60e51b815260206004820152600f60248201526e62616c616e636520746f6f206c6f7760881b6044820152606490fd5b60405162461bcd60e51b8152602060048201526011602482015270726563697069656e74206973207a65726f60781b6044820152606490fdfea264697066735822122024dc681ad1f7068147132ffd0d7bcda60d652eb747d8e6dfce284ae2e18f2ec764736f6c63430008140033",
+      "methodIdentifiers": {
+        "allowance(address,address)": "dd62ed3e",
+        "approve(address,uint256)": "095ea7b3",
+        "balanceOf(address)": "70a08231",
+        "decimals()": "313ce567",
+        "name()": "06fdde03",
+        "symbol()": "95d89b41",
+        "totalSupply()": "18160ddd",
+        "transfer(address,uint256)": "a9059cbb",
+        "transferFrom(address,address,uint256)": "23b872dd"
+      },
+      "source": "MantleLensDemoToken.sol"
+    }
+  },
+  "explorerBaseUrl": "https://sepolia.mantlescan.xyz",
+  "networkName": "Mantle Sepolia",
+  "schemaVersion": "mantlelens.p2_7_demo_contracts.v1"
+}

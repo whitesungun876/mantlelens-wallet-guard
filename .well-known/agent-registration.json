@@ -1,0 +1,4 @@
+{
+  "see": "../protocol/agent-registration.json",
+  "servedBy": "GET /.well-known/agent-registration.json"
+}

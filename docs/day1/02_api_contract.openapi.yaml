@@ -1,0 +1,940 @@
+openapi: 3.1.0
+info:
+  title: MantleLens Wallet Guard P0 API
+  version: 0.1.0
+  description: >
+    Day 1 frozen API contract for the 10-day MVP. P0 is view-only and
+    simulation-only. No endpoint executes revoke, swap, trade, or custodial
+    action.
+servers:
+  - url: http://localhost:8000
+    description: Local FastAPI service
+tags:
+  - name: wallet
+  - name: risk
+  - name: agent
+  - name: simulation
+  - name: assessment
+  - name: benchmark
+  - name: protocol
+paths:
+  /api/wallet/scan:
+    post:
+      tags: [wallet]
+      summary: Scan a Mantle wallet and return a structured assessment package.
+      operationId: scanWallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletScanRequest"
+      responses:
+        "200":
+          description: Wallet scan completed or partially completed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletRiskAssessment"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "503":
+          $ref: "#/components/responses/SourceUnavailable"
+  /api/wallet/balances:
+    get:
+      tags: [wallet]
+      summary: Return Mantle native and known-token balances.
+      operationId: getWalletBalances
+      parameters:
+        - $ref: "#/components/parameters/WalletAddress"
+      responses:
+        "200":
+          description: Balance scan result.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [walletAddress, chainId, balances, dataCoverage]
+                properties:
+                  walletAddress:
+                    type: string
+                  chainId:
+                    const: 5000
+                  balances:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/KnownTokenBalance"
+                  dataCoverage:
+                    $ref: "#/components/schemas/DataCoverage"
+  /api/wallet/approvals:
+    get:
+      tags: [wallet]
+      summary: Return token approval risk items with active allowance confirmation.
+      operationId: getWalletApprovals
+      parameters:
+        - $ref: "#/components/parameters/WalletAddress"
+        - name: mode
+          in: query
+          schema:
+            type: string
+            enum: [indexed_api, rpc_fallback]
+            default: rpc_fallback
+      responses:
+        "200":
+          description: Approval risk result.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [walletAddress, mode, approvals, dataCoverage]
+                properties:
+                  walletAddress:
+                    type: string
+                  mode:
+                    type: string
+                    enum: [indexed_api, rpc_fallback]
+                  approvals:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WalletApprovalRiskItem"
+                  dataCoverage:
+                    $ref: "#/components/schemas/DataCoverage"
+  /api/wallet/transfers:
+    get:
+      tags: [wallet]
+      summary: Return bounded recent transfer risk items over known tokens.
+      operationId: getWalletTransfers
+      parameters:
+        - $ref: "#/components/parameters/WalletAddress"
+        - name: blockWindow
+          in: query
+          schema:
+            type: integer
+            minimum: 1000
+            maximum: 500000
+            default: 100000
+      responses:
+        "200":
+          description: Recent transfer risk result.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [walletAddress, transfers, dataCoverage]
+                properties:
+                  walletAddress:
+                    type: string
+                  transfers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SuspiciousTransferItem"
+                  dataCoverage:
+                    $ref: "#/components/schemas/DataCoverage"
+  /api/wallet/exposure:
+    get:
+      tags: [wallet]
+      summary: Return portfolio concentration, DeFi stub, and RWA/yield exposure.
+      operationId: getWalletExposure
+      parameters:
+        - $ref: "#/components/parameters/WalletAddress"
+      responses:
+        "200":
+          description: Exposure result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletExposure"
+  /api/wallet/data-availability:
+    get:
+      tags: [wallet]
+      summary: Return source availability and data completeness.
+      operationId: getWalletDataAvailability
+      parameters:
+        - $ref: "#/components/parameters/WalletAddress"
+      responses:
+        "200":
+          description: Data availability result.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [walletAddress, sourceAvailability, dataCompleteness]
+                properties:
+                  walletAddress:
+                    type: string
+                  sourceAvailability:
+                    type: object
+                    additionalProperties:
+                      $ref: "#/components/schemas/SourceStatus"
+                  dataCompleteness:
+                    $ref: "#/components/schemas/WalletDataCompleteness"
+  /api/risk/evaluate-wallet:
+    post:
+      tags: [risk]
+      summary: Run the white-box risk engine.
+      operationId: evaluateWalletRisk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RiskEvaluationRequest"
+      responses:
+        "200":
+          description: White-box assessment result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletRiskAssessment"
+  /api/agent/explain:
+    post:
+      tags: [agent]
+      summary: Generate evidence-grounded plain-language explanation.
+      operationId: explainAssessment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExplanationRequest"
+      responses:
+        "200":
+          description: Explanation response with claim guard result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExplanationResponse"
+  /api/simulation/approval:
+    post:
+      tags: [simulation]
+      summary: Simulate revoke approval impact. Does not execute a transaction.
+      operationId: simulateApproval
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApprovalSimulationRequest"
+      responses:
+        "200":
+          description: Simulation-only before/after diff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimulationRun"
+  /api/simulation/portfolio:
+    post:
+      tags: [simulation]
+      summary: Simulate portfolio-level risk change. Does not execute a trade.
+      operationId: simulatePortfolio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PortfolioSimulationRequest"
+      responses:
+        "200":
+          description: Simulation-only before/after diff.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimulationRun"
+  /api/assessment/commit:
+    post:
+      tags: [assessment]
+      summary: Queue or record assessment hash. Real execution remains disabled.
+      operationId: commitAssessment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommitAssessmentRequest"
+      responses:
+        "202":
+          description: Commit accepted or queued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommitAssessmentResponse"
+  /api/assessment/outcome:
+    post:
+      tags: [assessment]
+      summary: Record user outcome hash for benchmark history.
+      operationId: recordOutcome
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OutcomeRequest"
+      responses:
+        "202":
+          description: Outcome accepted or queued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutcomeResponse"
+  /api/benchmark:
+    get:
+      tags: [benchmark]
+      summary: Return benchmark history.
+      operationId: getBenchmarkHistory
+      parameters:
+        - name: walletHash
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Benchmark records.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [records]
+                properties:
+                  records:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WalletRiskAssessmentRecord"
+  /agent-registration.json:
+    get:
+      tags: [protocol]
+      summary: ERC-8004 ready agent registration file.
+      responses:
+        "200":
+          description: Registration document.
+  /.well-known/agent-card.json:
+    get:
+      tags: [protocol]
+      summary: A2A agent card.
+      responses:
+        "200":
+          description: Agent card document.
+  /mcp:
+    post:
+      tags: [protocol]
+      summary: Read-only MCP tools/list and tools/call entrypoint.
+      responses:
+        "200":
+          description: MCP response.
+components:
+  parameters:
+    WalletAddress:
+      name: walletAddress
+      in: query
+      required: true
+      schema:
+        type: string
+        pattern: "^0x[a-fA-F0-9]{40}$"
+  responses:
+    BadRequest:
+      description: Invalid wallet address or request.
+    SourceUnavailable:
+      description: One or more external data sources are unavailable. The caller should not interpret this as safe.
+  schemas:
+    WalletScanRequest:
+      type: object
+      required: [walletAddress]
+      properties:
+        walletAddress:
+          type: string
+          pattern: "^0x[a-fA-F0-9]{40}$"
+        chainId:
+          type: integer
+          const: 5000
+          default: 5000
+        dataMode:
+          type: string
+          enum: [live, demo, replay]
+          default: live
+        blockWindow:
+          type: integer
+          minimum: 1000
+          maximum: 500000
+          default: 100000
+        includeExplanation:
+          type: boolean
+          default: true
+        traceId:
+          type: string
+    WalletRiskAssessment:
+      type: object
+      required:
+        - schemaVersion
+        - assessmentId
+        - timestamp
+        - chainId
+        - wallet
+        - walletRiskScore
+        - riskLevel
+        - dataConfidence
+        - topRisks
+        - subScores
+        - metricResults
+        - dataCompleteness
+        - evidenceBundleHash
+        - recommendationHash
+        - suggestedActions
+        - dataMode
+      properties:
+        schemaVersion:
+          const: mantlelens.wallet_assessment.v1
+        assessmentId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        chainId:
+          const: 5000
+        wallet:
+          $ref: "#/components/schemas/WalletIdentity"
+        walletRiskScore:
+          type: number
+          minimum: 0
+          maximum: 100
+        riskLevel:
+          $ref: "#/components/schemas/RiskLevel"
+        dataConfidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        topRisks:
+          type: array
+          maxItems: 3
+          items:
+            $ref: "#/components/schemas/WalletRisk"
+        subScores:
+          $ref: "#/components/schemas/SubScores"
+        metricResults:
+          type: array
+          items:
+            $ref: "#/components/schemas/MetricResult"
+        dataCompleteness:
+          $ref: "#/components/schemas/WalletDataCompleteness"
+        evidenceBundleHash:
+          type: string
+        recommendationHash:
+          type: string
+        suggestedActions:
+          type: array
+          items:
+            $ref: "#/components/schemas/SuggestedAction"
+        onChainRecord:
+          $ref: "#/components/schemas/OnChainRecord"
+        dataMode:
+          type: string
+          enum: [live, demo, replay]
+    WalletIdentity:
+      type: object
+      required: [address, walletHash]
+      properties:
+        address:
+          type: string
+        walletHash:
+          type: string
+    RiskLevel:
+      type: string
+      enum: [Low, Moderate, High, Critical]
+    SubScores:
+      type: object
+      required: [approvalRisk, suspiciousTransferRisk, assetConcentrationRisk, defiExposureStub, rwaYieldRisk]
+      properties:
+        approvalRisk:
+          type: number
+        suspiciousTransferRisk:
+          type: number
+        assetConcentrationRisk:
+          type: number
+        defiExposureStub:
+          type: number
+        rwaYieldRisk:
+          type: number
+    WalletRisk:
+      type: object
+      required: [riskId, type, severity, claimText, scoreImpact, evidenceIds]
+      properties:
+        riskId:
+          type: string
+        type:
+          type: string
+          enum: [approval, transfer, concentration, defi, rwa_yield, data_quality]
+        severity:
+          $ref: "#/components/schemas/RiskLevel"
+        claimText:
+          type: string
+        scoreImpact:
+          type: number
+        evidenceIds:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        limitations:
+          type: array
+          items:
+            type: string
+    MetricResult:
+      type: object
+      required: [metricId, label, score, weight, weightedContribution, severity, evidenceIds, calculationMode]
+      properties:
+        metricId:
+          type: string
+          enum: [approvalRisk, suspiciousTransferRisk, assetConcentrationRisk, defiExposureStub, rwaYieldRisk]
+        label:
+          type: string
+        score:
+          type: number
+          minimum: 0
+          maximum: 100
+        weight:
+          type: number
+        weightedContribution:
+          type: number
+        severity:
+          $ref: "#/components/schemas/RiskLevel"
+        evidenceIds:
+          type: array
+          items:
+            type: string
+        calculationMode:
+          type: string
+        limitations:
+          type: array
+          items:
+            type: string
+    SuggestedAction:
+      type: object
+      required: [actionId, actionType, label, executionMode, evidenceIds]
+      properties:
+        actionId:
+          type: string
+        actionType:
+          type: string
+          enum:
+            - NO_ACTION
+            - REVIEW_APPROVAL
+            - REVIEW_SPENDER
+            - MARK_ADDRESS_SUSPICIOUS
+            - SIMULATE_REVOKE_APPROVAL
+            - SIMULATE_REDUCE_METH_INCREASE_MUSD
+            - REVIEW_DEFI_EXPOSURE
+            - RECORD_ASSESSMENT_ONLY
+        label:
+          type: string
+        executionMode:
+          type: string
+          enum: [view_only, simulation_only]
+        evidenceIds:
+          type: array
+          minItems: 1
+          items:
+            type: string
+    Evidence:
+      type: object
+      required: [evidenceId, type, claimText, source, rawData, timestamp, evidenceHash, dataQuality]
+      properties:
+        evidenceId:
+          type: string
+        type:
+          type: string
+          enum: [approval, transfer, balance, price, token_security, spender_label, defi_position, rwa_yield, rule, simulation, onchain_record]
+        claimText:
+          type: string
+        source:
+          type: string
+        endpoint:
+          type: string
+        rawData:
+          type: object
+        txHash:
+          type: string
+        allowanceConfirmed:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+        evidenceHash:
+          type: string
+        dataQuality:
+          type: string
+          enum: [fresh, stale, mock, missing, conflict]
+        limitation:
+          type: string
+    WalletApprovalRiskItem:
+      type: object
+      required: [token, tokenAddress, spender, allowanceRaw, isUnlimited, isActive, source, dataCoverage, evidenceId]
+      properties:
+        token:
+          type: string
+        tokenAddress:
+          type: string
+        spender:
+          type: string
+        spenderLabel:
+          type: string
+        allowanceRaw:
+          type: string
+        allowanceUsd:
+          type: number
+        isUnlimited:
+          type: boolean
+        isActive:
+          type: boolean
+        source:
+          type: string
+          enum: [moralis, rpc_logs_allowance]
+        dataCoverage:
+          type: string
+          enum: [complete, known_token_only, partial]
+        evidenceId:
+          type: string
+    SuspiciousTransferItem:
+      type: object
+      required: [transferId, transferType, token, amount, counterparty, pattern, riskLevel, evidenceId]
+      properties:
+        transferId:
+          type: string
+        transferType:
+          type: string
+          enum: [outgoing, incoming, dust, fake_token]
+        token:
+          type: string
+        amount:
+          type: string
+        counterparty:
+          type: string
+        pattern:
+          type: string
+        riskLevel:
+          $ref: "#/components/schemas/RiskLevel"
+        evidenceId:
+          type: string
+    KnownTokenBalance:
+      type: object
+      required: [symbol, tokenAddress, balanceRaw, balance, priceUsd, valueUsd, evidenceId]
+      properties:
+        symbol:
+          type: string
+        tokenAddress:
+          type: string
+        balanceRaw:
+          type: string
+        balance:
+          type: number
+        priceUsd:
+          type: number
+        valueUsd:
+          type: number
+        evidenceId:
+          type: string
+    WalletExposure:
+      type: object
+      required: [walletAddress, totalWalletValueUsd, topAsset, topAssetPct, top3AssetPct, rwaYieldExposure, dataCoverage]
+      properties:
+        walletAddress:
+          type: string
+        totalWalletValueUsd:
+          type: number
+        topAsset:
+          type: string
+        topAssetPct:
+          type: number
+        top3AssetPct:
+          type: number
+        stablecoinPct:
+          type: number
+        illiquidTokenPct:
+          type: number
+        rwaYieldExposure:
+          type: object
+        defiExposureStub:
+          type: object
+        dataCoverage:
+          $ref: "#/components/schemas/DataCoverage"
+    WalletDataCompleteness:
+      type: object
+      required:
+        - nativeBalance
+        - knownTokenBalances
+        - fullTokenInventory
+        - approvalEvents
+        - activeAllowanceConfirmation
+        - transactionHistory
+        - transferLogs
+        - spenderLabels
+        - tokenSecurity
+        - defiPositions
+        - rwaYieldExposure
+      properties:
+        nativeBalance:
+          $ref: "#/components/schemas/Availability"
+        knownTokenBalances:
+          $ref: "#/components/schemas/Availability"
+        fullTokenInventory:
+          type: string
+          enum: [available, unavailable, not_supported_p0]
+        approvalEvents:
+          $ref: "#/components/schemas/Availability"
+        activeAllowanceConfirmation:
+          $ref: "#/components/schemas/Availability"
+        transactionHistory:
+          $ref: "#/components/schemas/Availability"
+        transferLogs:
+          $ref: "#/components/schemas/Availability"
+        spenderLabels:
+          $ref: "#/components/schemas/Availability"
+        tokenSecurity:
+          $ref: "#/components/schemas/Availability"
+        defiPositions:
+          type: string
+          enum: [available, partial, not_supported_p0]
+        rwaYieldExposure:
+          $ref: "#/components/schemas/Availability"
+    Availability:
+      type: string
+      enum: [available, partial, unavailable]
+    DataCoverage:
+      type: string
+      enum: [full, partial, known-token-only, replay]
+    SourceStatus:
+      type: object
+      required: [status, checkedAt]
+      properties:
+        status:
+          type: string
+          enum: [available, partial, unavailable]
+        checkedAt:
+          type: string
+          format: date-time
+        limitation:
+          type: string
+    RiskEvaluationRequest:
+      type: object
+      required: [walletAddress, toolOutputs, evidence]
+      properties:
+        walletAddress:
+          type: string
+        toolOutputs:
+          type: object
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/Evidence"
+        traceId:
+          type: string
+    ExplanationRequest:
+      type: object
+      required: [assessment, evidence]
+      properties:
+        assessment:
+          $ref: "#/components/schemas/WalletRiskAssessment"
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/Evidence"
+        language:
+          type: string
+          enum: [zh, en]
+          default: en
+    ExplanationResponse:
+      type: object
+      required: [assessmentId, mode, explanation, claims, claimGuardPassed]
+      properties:
+        assessmentId:
+          type: string
+        mode:
+          type: string
+          enum: [llm, rule_fallback]
+        explanation:
+          type: string
+        claims:
+          type: array
+          items:
+            type: object
+            required: [claimText, evidenceIds]
+            properties:
+              claimText:
+                type: string
+              evidenceIds:
+                type: array
+                items:
+                  type: string
+        claimGuardPassed:
+          type: boolean
+        fallbackReason:
+          type: string
+    ApprovalSimulationRequest:
+      type: object
+      required: [assessmentId, tokenAddress, spender, traceId]
+      properties:
+        assessmentId:
+          type: string
+        tokenAddress:
+          type: string
+        spender:
+          type: string
+        traceId:
+          type: string
+    PortfolioSimulationRequest:
+      type: object
+      required: [assessmentId, proposedChange, traceId]
+      properties:
+        assessmentId:
+          type: string
+        proposedChange:
+          type: object
+        traceId:
+          type: string
+    SimulationRun:
+      type: object
+      required: [simulationId, assessmentId, simulationType, executionMode, before, after, evidenceIds]
+      properties:
+        simulationId:
+          type: string
+        assessmentId:
+          type: string
+        simulationType:
+          type: string
+          enum: [approval_revoke_impact, portfolio_adjustment]
+        executionMode:
+          const: simulation_only
+        before:
+          $ref: "#/components/schemas/SubScores"
+        after:
+          $ref: "#/components/schemas/SubScores"
+        summary:
+          type: string
+        evidenceIds:
+          type: array
+          items:
+            type: string
+    CommitAssessmentRequest:
+      type: object
+      required: [assessmentId, assessmentHash, evidenceBundleHash, idempotencyKey, traceId]
+      properties:
+        assessmentId:
+          type: string
+        assessmentHash:
+          type: string
+        evidenceBundleHash:
+          type: string
+        idempotencyKey:
+          type: string
+        traceId:
+          type: string
+    CommitAssessmentResponse:
+      type: object
+      required: [assessmentId, status, assessmentHash]
+      properties:
+        assessmentId:
+          type: string
+        status:
+          type: string
+          enum: [queued, pending_retry, pending_unavailable, recorded]
+        assessmentHash:
+          type: string
+        assessmentTx:
+          type: string
+    OutcomeRequest:
+      type: object
+      required: [assessmentId, outcomeHash, userResponse, idempotencyKey, traceId]
+      properties:
+        assessmentId:
+          type: string
+        outcomeHash:
+          type: string
+        userResponse:
+          type: string
+          enum: [viewed, simulated, ignored, marked_safe]
+        idempotencyKey:
+          type: string
+        traceId:
+          type: string
+    OutcomeResponse:
+      type: object
+      required: [assessmentId, status, outcomeHash]
+      properties:
+        assessmentId:
+          type: string
+        status:
+          type: string
+          enum: [queued, pending_retry, pending_unavailable, recorded]
+        outcomeHash:
+          type: string
+        outcomeTx:
+          type: string
+    OnChainRecord:
+      type: object
+      required: [assessmentHash]
+      properties:
+        assessmentHash:
+          type: string
+        assessmentTx:
+          type: string
+        outcomeHash:
+          type: string
+        outcomeTx:
+          type: string
+    WalletRiskAssessmentRecord:
+      type: object
+      required:
+        - assessmentId
+        - agentId
+        - walletHash
+        - walletRiskScore
+        - riskLevel
+        - dataConfidence
+        - evidenceBundleHash
+        - recommendationHash
+        - dataMode
+        - decisionType
+        - actionType
+        - assessmentHash
+      properties:
+        assessmentId:
+          type: string
+        agentId:
+          type: string
+        walletHash:
+          type: string
+        walletRiskScore:
+          type: number
+        riskLevel:
+          $ref: "#/components/schemas/RiskLevel"
+        dataConfidence:
+          type: number
+        topRisksHash:
+          type: string
+        evidenceBundleHash:
+          type: string
+        recommendationHash:
+          type: string
+        simulationOutcomeHash:
+          type: string
+        dataMode:
+          type: string
+          enum: [live, demo, replay]
+        decisionType:
+          type: string
+        actionType:
+          type: string
+        assessmentURI:
+          type: string
+        assessmentHash:
+          type: string
+        assessmentTx:
+          type: string
+        outcomeHash:
+          type: string
+        outcomeTx:
+          type: string

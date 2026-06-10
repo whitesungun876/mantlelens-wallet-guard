@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MantleLens API Workspace</title>
+    <style>
+      :root {
+        --bg: #f5f6f4;
+        --surface: #ffffff;
+        --ink: #17201d;
+        --muted: #64726d;
+        --line: #d9dfdc;
+        --teal: #127c73;
+        --red: #b8372c;
+        --amber: #a56312;
+        --blue: #315d93;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 62px;
+        padding: 12px 18px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 16px;
+      }
+
+      h2 {
+        font-size: 14px;
+      }
+
+      h3 {
+        font-size: 13px;
+      }
+
+      button,
+      select,
+      input {
+        font: inherit;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: 280px minmax(520px, 1fr) 360px;
+        gap: 14px;
+        padding: 14px;
+      }
+
+      .panel {
+        min-width: 0;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      .panel + .panel {
+        margin-top: 14px;
+      }
+
+      .panel-head {
+        padding: 13px 14px 10px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .panel-body {
+        padding: 14px;
+      }
+
+      .controls {
+        display: grid;
+        gap: 10px;
+      }
+
+      select,
+      input,
+      button {
+        width: 100%;
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--ink);
+      }
+
+      button.primary {
+        color: #fff;
+        background: var(--teal);
+        border-color: var(--teal);
+      }
+
+      button:disabled {
+        color: var(--muted);
+        background: #eef3f1;
+      }
+
+      .button-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .field {
+        display: grid;
+        gap: 4px;
+      }
+
+      .field label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      input::placeholder {
+        color: #88948f;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .metric {
+        min-height: 88px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      .metric span,
+      small {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 8px;
+        font-size: 26px;
+        line-height: 1;
+        overflow-wrap: anywhere;
+      }
+
+      .risk {
+        color: var(--red);
+      }
+
+      #dataStatus {
+        font-size: 18px;
+        line-height: 1.15;
+      }
+
+      .banner {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border: 1px solid #efc985;
+        border-radius: 8px;
+        background: #fff7e8;
+        color: #5e4218;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .row {
+        display: grid;
+        gap: 4px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      .row.selected {
+        border-color: var(--teal);
+        background: #eef8f5;
+      }
+
+      .row-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .row-top strong {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 24px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: #eef3f1;
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .pill.high {
+        color: var(--red);
+        background: #fae9e7;
+      }
+
+      .pill.ok {
+        color: var(--teal);
+      }
+
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", monospace;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+
+      pre {
+        max-height: 340px;
+        overflow: auto;
+        padding: 12px;
+        border-radius: 8px;
+        background: #101817;
+        color: #d8f0e8;
+        font-size: 12px;
+      }
+
+      a {
+        color: var(--blue);
+        text-decoration: none;
+      }
+
+      @media (max-width: 1120px) {
+        main {
+          grid-template-columns: 280px 1fr;
+        }
+
+        .right {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 760px) {
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        main,
+        .summary {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>MantleLens Wallet Guard</h1>
+        <small>P1 live-data workspace</small>
+      </div>
+      <span class="pill ok" id="health">checking API</span>
+    </header>
+
+    <main>
+      <aside>
+        <div class="panel">
+          <div class="panel-head"><h2>Scan Wallet</h2></div>
+          <div class="panel-body controls">
+            <select id="dataMode">
+              <option value="demo">Demo replay</option>
+              <option value="live">Live Mantle</option>
+            </select>
+            <select id="fixture">
+              <option value="high_risk_wallet">High risk wallet</option>
+              <option value="moderate_partial_wallet">Moderate partial wallet</option>
+              <option value="low_risk_wallet">Low risk wallet</option>
+            </select>
+            <input
+              id="walletAddress"
+              inputmode="text"
+              autocomplete="off"
+              placeholder="0x wallet address"
+            />
+            <div class="field-grid">
+              <div class="field">
+                <label for="pageSize">Page size</label>
+                <input id="pageSize" type="number" min="10" max="1000" step="10" value="10" />
+              </div>
+              <div class="field">
+                <label for="maxPages">Max pages</label>
+                <input id="maxPages" type="number" min="1" max="10" step="1" value="2" />
+              </div>
+            </div>
+            <button class="primary" id="scan">Scan wallet</button>
+            <div class="button-grid">
+              <button id="simulateApproval" disabled>Sim approval</button>
+              <button id="simulatePortfolio" disabled>Sim portfolio</button>
+            </div>
+            <div class="button-grid">
+              <button id="commit" disabled>Commit hash</button>
+              <button id="guardTest" disabled>Guard LLM</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Agent Trace</h2></div>
+          <div class="panel-body list" id="trace"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Protocol</h2></div>
+          <div class="panel-body list">
+            <div class="row">
+              <strong>Agent Card</strong>
+              <a class="mono" href="/.well-known/agent-card.json" target="_blank">/.well-known/agent-card.json</a>
+            </div>
+            <div class="row">
+              <strong>Registration</strong>
+              <a class="mono" href="/agent-registration.json" target="_blank">/agent-registration.json</a>
+            </div>
+            <div class="row">
+              <strong>MCP</strong>
+              <small>POST /mcp · read-only tools</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section>
+        <div class="panel">
+          <div class="panel-head"><h2>Assessment</h2></div>
+          <div class="panel-body">
+            <div class="summary">
+              <div class="metric">
+                <span>Score</span>
+                <strong class="risk" id="score">-</strong>
+              </div>
+              <div class="metric">
+                <span>Risk Level</span>
+                <strong class="risk" id="riskLevel">-</strong>
+              </div>
+              <div class="metric">
+                <span>Confidence</span>
+                <strong id="confidence">-</strong>
+              </div>
+              <div class="metric">
+                <span>Data Status</span>
+                <strong id="dataStatus">-</strong>
+              </div>
+            </div>
+            <div class="banner" id="coverage">Run a scan to load coverage.</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Top Risks</h2></div>
+          <div class="panel-body list" id="risks"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Approval History</h2></div>
+          <div class="panel-body list" id="approvalHistory"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Transfer History</h2></div>
+          <div class="panel-body list" id="transferHistory"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Guarded Explanation</h2></div>
+          <div class="panel-body">
+            <pre id="explanation">Run a scan.</pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Simulation Diff</h2></div>
+          <div class="panel-body">
+            <pre id="simulation">Run a simulation.</pre>
+          </div>
+        </div>
+      </section>
+
+      <aside class="right">
+        <div class="panel">
+          <div class="panel-head"><h2>Inventory</h2></div>
+          <div class="panel-body list" id="inventory"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Page Coverage</h2></div>
+          <div class="panel-body list" id="pageCoverage"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Risk Trend</h2></div>
+          <div class="panel-body list" id="trend"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Alerts</h2></div>
+          <div class="panel-body list" id="alerts"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Evidence Bundle</h2></div>
+          <div class="panel-body list" id="evidence"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Benchmark History</h2></div>
+          <div class="panel-body list" id="benchmark"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Core Events</h2></div>
+          <div class="panel-body list" id="events"></div>
+        </div>
+      </aside>
+    </main>
+
+    <script>
+      const health = document.getElementById("health");
+      const dataMode = document.getElementById("dataMode");
+      const fixture = document.getElementById("fixture");
+      const walletAddress = document.getElementById("walletAddress");
+      const pageSize = document.getElementById("pageSize");
+      const maxPages = document.getElementById("maxPages");
+      const scanButton = document.getElementById("scan");
+      const simulateApprovalButton = document.getElementById("simulateApproval");
+      const simulatePortfolioButton = document.getElementById("simulatePortfolio");
+      const commitButton = document.getElementById("commit");
+      const guardTestButton = document.getElementById("guardTest");
+      let currentData = null;
+      let currentSimulation = null;
+
+      async function checkHealth() {
+        try {
+          const response = await fetch("/api/health");
+          const data = await response.json();
+          health.textContent = `${data.status} · ${data.mode} · day ${data.day}`;
+        } catch {
+          health.textContent = "API unavailable";
+        }
+      }
+
+      async function scan() {
+        scanButton.disabled = true;
+        scanButton.textContent = "Scanning";
+        try {
+          const response = await fetch("/api/wallet/scan", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              dataMode: dataMode.value,
+              fixtureId: dataMode.value === "live" ? "live_wallet" : fixture.value,
+              walletAddress:
+                dataMode.value === "live" ? walletAddress.value.trim() : undefined,
+              historyOptions:
+                dataMode.value === "live"
+                  ? {
+                      pageSize: Number(pageSize.value || 10),
+                      maxPages: Number(maxPages.value || 2),
+                      fromBlock: 1,
+                      toBlock: "latest",
+                      sort: "desc",
+                    }
+                  : undefined,
+              includeExplanation: true,
+            }),
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message || data.error);
+          currentData = data;
+          currentSimulation = null;
+          render(data);
+          setActionButtons(true);
+          await loadBenchmark();
+          await loadEvents();
+        } catch (error) {
+          document.getElementById("coverage").textContent = error.message;
+        } finally {
+          scanButton.disabled = false;
+          scanButton.textContent = "Scan wallet";
+        }
+      }
+
+      async function simulate(simulationType) {
+        if (!currentData) return;
+        const url =
+          simulationType === "approval_revoke_impact"
+            ? "/api/simulation/approval"
+            : "/api/simulation/portfolio";
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            assessment: currentData.assessment,
+            actionId:
+              simulationType === "approval_revoke_impact"
+                ? "act_simulate_revoke_approval"
+                : "act_simulate_portfolio_adjustment",
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || data.error);
+        currentSimulation = data.simulation;
+        document.getElementById("simulation").textContent = JSON.stringify(
+          {
+            type: data.simulation.simulationType,
+            executionMode: data.simulation.executionMode,
+            before: data.simulation.before.walletRiskScore,
+            after: data.simulation.after.walletRiskScore,
+            delta: data.simulation.scoreDelta,
+            transactionCreated: data.simulation.transactionCreated,
+          },
+          null,
+          2,
+        );
+        await loadEvents();
+      }
+
+      async function commitAssessment() {
+        if (!currentData) return;
+        const response = await fetch("/api/assessment/commit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            assessment: currentData.assessment,
+            simulation: currentSimulation,
+            confirmationReceived: true,
+            idempotencyKey: `idem_${currentData.assessment.assessmentId}`,
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || data.error);
+        document.getElementById("simulation").textContent = JSON.stringify(
+          {
+            committed: true,
+            status: data.record.status,
+            assessmentHash: data.record.assessmentHash,
+            assessmentTx: data.record.assessmentTx,
+            realExecutionAllowed: data.record.realExecutionAllowed,
+          },
+          null,
+          2,
+        );
+        await loadBenchmark();
+        await loadEvents();
+      }
+
+      async function guardBadCandidate() {
+        if (!currentData) return;
+        const response = await fetch("/api/agent/explain", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            assessment: currentData.assessment,
+            evidence: currentData.evidenceBundle.evidence,
+            candidate: {
+              mode: "llm",
+              explanation:
+                "Your wallet is guaranteed safe and all risks detected.",
+              claims: [
+                {
+                  claimText: "This wallet is guaranteed safe.",
+                  evidenceIds: [],
+                },
+              ],
+            },
+          }),
+        });
+        const data = await response.json();
+        document.getElementById("explanation").textContent = JSON.stringify(
+          {
+            mode: data.mode,
+            fallbackReason: data.fallbackReason,
+            guardFailures: data.guardFailures,
+            claimGuardPassed: data.claimGuardPassed,
+          },
+          null,
+          2,
+        );
+      }
+
+      async function loadBenchmark() {
+        const walletHash = currentData?.assessment?.wallet?.walletHash;
+        const url = walletHash
+          ? `/api/benchmark?walletHash=${encodeURIComponent(walletHash)}`
+          : "/api/benchmark";
+        const response = await fetch(url);
+        const data = await response.json();
+        document.getElementById("benchmark").innerHTML =
+          data.records
+            .map(
+              (record) => `
+                <div class="row">
+                  <strong>${record.riskLevel} · ${record.walletRiskScore}</strong>
+                  <small class="mono">${record.assessmentId}</small>
+                  <small class="mono">${record.assessmentTx}</small>
+                </div>`,
+            )
+            .join("") || "<small>No benchmark records yet.</small>";
+      }
+
+      async function loadEvents() {
+        const response = await fetch("/api/events");
+        const data = await response.json();
+        document.getElementById("events").innerHTML = data.events
+          .slice(-8)
+          .reverse()
+          .map(
+            (event) => `
+              <div class="row">
+                <strong>${event.eventName}</strong>
+                <small class="mono">${event.traceId}</small>
+              </div>`,
+          )
+          .join("");
+      }
+
+      function setActionButtons(enabled) {
+        simulateApprovalButton.disabled = !enabled;
+        simulatePortfolioButton.disabled = !enabled;
+        commitButton.disabled = !enabled;
+        guardTestButton.disabled = !enabled;
+      }
+
+      function render(data) {
+        const assessment = data.assessment;
+        document.getElementById("score").textContent =
+          assessment.walletRiskScore;
+        document.getElementById("riskLevel").textContent =
+          assessment.riskLevel;
+        document.getElementById("confidence").textContent =
+          assessment.dataConfidence.toFixed(2);
+        document.getElementById("dataStatus").textContent =
+          assessment.dataStatus;
+        document.getElementById("coverage").textContent =
+          `${assessment.dataMode} scan · missing indexed data is treated as unknown, not safe.`;
+
+        document.getElementById("risks").innerHTML = assessment.topRisks
+          .map(
+            (risk) => `
+                <div class="row risk-row" data-evidence="${risk.evidenceIds.join(",")}">
+                <div class="row-top">
+                  <strong>${risk.claimText}</strong>
+                  <span class="pill high">${risk.severity}</span>
+                </div>
+                <small>${risk.evidenceIds.join(", ")}</small>
+              </div>`,
+          )
+          .join("") || "<small>No top risks from the executable kernel.</small>";
+
+        renderEvidence(data.evidenceBundle.evidence);
+        renderInventory(data.inventory);
+        renderPageCoverage(data.coverage?.pageCoverage);
+        renderHistory(data.history);
+        renderTrend(data.trend);
+        renderAlerts(data.alerts);
+
+        document.getElementById("trace").innerHTML = data.trace.events
+          .map(
+            (event) => `
+              <div class="row">
+                <strong>${event.toState || event.toolName || event.eventType}</strong>
+                <small>${event.eventType} · ${event.policyDecision}</small>
+              </div>`,
+          )
+          .join("");
+
+        document.getElementById("explanation").textContent =
+          data.explanation?.explanation || "No explanation returned.";
+        document.getElementById("simulation").textContent = "Run a simulation.";
+        document.querySelectorAll(".risk-row").forEach((row) => {
+          row.addEventListener("click", () => {
+            const ids = row.dataset.evidence.split(",");
+            document
+              .querySelectorAll(".risk-row")
+              .forEach((node) => node.classList.remove("selected"));
+            row.classList.add("selected");
+            renderEvidence(data.evidenceBundle.evidence, ids);
+          });
+        });
+      }
+
+      function renderEvidence(evidence, preferredIds = []) {
+        const preferred = new Set(preferredIds);
+        const sorted = [...evidence].sort((left, right) => {
+          return Number(preferred.has(right.evidenceId)) - Number(preferred.has(left.evidenceId));
+        });
+        document.getElementById("evidence").innerHTML = sorted
+          .slice(0, 8)
+          .map(
+            (item) => `
+              <div class="row ${preferred.has(item.evidenceId) ? "selected" : ""}">
+                <strong class="mono">${item.evidenceId}</strong>
+                <small>${item.source} · ${item.endpoint || "n/a"}</small>
+                <p>${item.claimText}</p>
+              </div>`,
+          )
+          .join("");
+      }
+
+      function renderInventory(inventory) {
+        const target = document.getElementById("inventory");
+        if (!inventory || !Array.isArray(inventory.tokens)) {
+          target.innerHTML = "<small>No inventory returned for this mode.</small>";
+          return;
+        }
+        target.innerHTML =
+          inventory.tokens
+            .slice(0, 8)
+            .map(
+              (token) => `
+                <div class="row">
+                  <div class="row-top">
+                    <strong>${escapeHtml(token.symbol || token.tokenAddress)}</strong>
+                    <span class="pill">${escapeHtml(token.securityStatus || "unknown")}</span>
+                  </div>
+                  <small>${formatAmount(token.balance)} · ${escapeHtml(token.balanceSource || token.candidateSource || "source")}</small>
+                  <small class="mono">${escapeHtml(token.tokenAddress)}</small>
+                </div>`,
+            )
+            .join("") || "<small>No nonzero token balances in the fetched inventory.</small>";
+      }
+
+      function renderPageCoverage(pageCoverage) {
+        const target = document.getElementById("pageCoverage");
+        const entries = Object.entries(pageCoverage || {});
+        if (!entries.length) {
+          target.innerHTML = "<small>No page coverage for this mode.</small>";
+          return;
+        }
+        target.innerHTML = entries
+          .map(
+            ([name, info]) => `
+              <div class="row">
+                <div class="row-top">
+                  <strong>${escapeHtml(name)}</strong>
+                  <span class="pill ${info.hasMore ? "high" : "ok"}">${info.hasMore ? "more" : "done"}</span>
+                </div>
+                <small>pages ${info.fetchedPages ?? 0} · rows ${info.rowCount ?? 0} · size ${info.pageSize ?? "-"}</small>
+                <small>blocks ${info.fromBlock ?? "-"} -> ${info.toBlock ?? "-"}</small>
+              </div>`,
+          )
+          .join("");
+      }
+
+      function renderHistory(history) {
+        const approval = history?.approvalHistory;
+        const transfer = history?.transferHistory;
+        renderApprovalHistory(approval);
+        renderTransferHistory(transfer);
+      }
+
+      function renderApprovalHistory(approvalHistory) {
+        const target = document.getElementById("approvalHistory");
+        const items = approvalHistory?.items || [];
+        if (!items.length) {
+          target.innerHTML = `<small>${escapeHtml(approvalHistory?.status || "No approval history returned.")}</small>`;
+          return;
+        }
+        target.innerHTML = items
+          .slice(0, 8)
+          .map(
+            (item) => `
+              <div class="row">
+                <div class="row-top">
+                  <strong>${escapeHtml(item.token || item.tokenAddress)}</strong>
+                  <span class="pill ${item.isActive ? "high" : "ok"}">${item.isActive ? "active" : "inactive"}</span>
+                </div>
+                <small>${item.isUnlimited ? "unlimited" : "limited"} · block ${item.blockNumber ?? "-"}</small>
+                <small class="mono">${escapeHtml(item.spender || "unknown spender")}</small>
+              </div>`,
+          )
+          .join("");
+      }
+
+      function renderTransferHistory(transferHistory) {
+        const target = document.getElementById("transferHistory");
+        const items = transferHistory?.items || [];
+        if (!items.length) {
+          target.innerHTML = `<small>${escapeHtml(transferHistory?.status || "No transfer history returned.")}</small>`;
+          return;
+        }
+        target.innerHTML = items
+          .slice(0, 8)
+          .map(
+            (item) => `
+              <div class="row">
+                <div class="row-top">
+                  <strong>${escapeHtml(item.token || item.tokenAddress)}</strong>
+                  <span class="pill ${item.riskLevel === "High" ? "high" : "ok"}">${escapeHtml(item.direction || item.transferType || "transfer")}</span>
+                </div>
+                <small>${escapeHtml(item.amount || "0")} · ${escapeHtml(item.pattern || "token_transfer")} · block ${item.blockNumber ?? "-"}</small>
+                <small class="mono">${escapeHtml(item.counterparty || "unknown counterparty")}</small>
+              </div>`,
+          )
+          .join("");
+      }
+
+      function renderTrend(trend) {
+        const target = document.getElementById("trend");
+        if (!trend || !Array.isArray(trend.points)) {
+          target.innerHTML = "<small>No trend history returned.</small>";
+          return;
+        }
+        const delta = trend.delta;
+        const deltaBlock = delta
+          ? `
+              <div class="row">
+                <div class="row-top">
+                  <strong>Score ${formatSigned(delta.scoreDelta)}</strong>
+                  <span class="pill ${delta.riskLevelChanged ? "high" : "ok"}">${delta.riskLevelChanged ? "changed" : "stable"}</span>
+                </div>
+                <small>${escapeHtml(delta.previousRiskLevel)} -> ${escapeHtml(delta.currentRiskLevel)}</small>
+                <small>${delta.newTopRiskIds.length ? `new: ${escapeHtml(delta.newTopRiskIds.join(", "))}` : "no new top risks"}</small>
+              </div>`
+          : `
+              <div class="row">
+                <div class="row-top">
+                  <strong>${escapeHtml(trend.status)}</strong>
+                  <span class="pill">points ${trend.pointCount ?? trend.points.length}</span>
+                </div>
+                <small>Scan this wallet again to calculate a newest-vs-previous delta.</small>
+              </div>`;
+        const points = trend.points
+          .slice(-4)
+          .reverse()
+          .map(
+            (point) => `
+              <div class="row">
+                <div class="row-top">
+                  <strong>${point.walletRiskScore} · ${escapeHtml(point.riskLevel)}</strong>
+                  <span class="pill">${escapeHtml(point.dataStatus || "status")}</span>
+                </div>
+                <small>${escapeHtml(point.timestamp)}</small>
+                <small class="mono">${escapeHtml(point.assessmentHash)}</small>
+              </div>`,
+          )
+          .join("");
+        target.innerHTML = deltaBlock + points;
+      }
+
+      function renderAlerts(alerts) {
+        const target = document.getElementById("alerts");
+        const items = Array.isArray(alerts) ? alerts : [];
+        if (!items.length) {
+          target.innerHTML = "<small>No open alerts from this scan.</small>";
+          return;
+        }
+        target.innerHTML = items
+          .slice(0, 8)
+          .map((alert) => {
+            const boundIds = alert.evidenceIds?.length
+              ? alert.evidenceIds.join(", ")
+              : alert.sourceAssessmentHash;
+            return `
+              <div class="row">
+                <div class="row-top">
+                  <strong>${escapeHtml(alert.title || alert.alertType)}</strong>
+                  <span class="pill ${alert.severity === "High" || alert.severity === "Critical" ? "high" : "ok"}">${escapeHtml(alert.severity || "Moderate")}</span>
+                </div>
+                <small>${escapeHtml(alert.message || "")}</small>
+                <small>${escapeHtml(alert.status || "open")} · seen ${alert.occurrenceCount ?? 1}</small>
+                <small class="mono">${escapeHtml(boundIds)}</small>
+              </div>`;
+          })
+          .join("");
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function formatAmount(value) {
+        const number = Number(value || 0);
+        if (!Number.isFinite(number)) return "0";
+        if (number === 0) return "0";
+        if (number < 0.000001) return number.toExponential(2);
+        return number.toLocaleString(undefined, { maximumFractionDigits: 6 });
+      }
+
+      function formatSigned(value) {
+        const number = Number(value || 0);
+        if (!Number.isFinite(number)) return "0";
+        return `${number > 0 ? "+" : ""}${number.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+      }
+
+      scanButton.addEventListener("click", scan);
+      dataMode.addEventListener("change", () => {
+        const live = dataMode.value === "live";
+        fixture.disabled = live;
+        walletAddress.disabled = !live;
+        pageSize.disabled = !live;
+        maxPages.disabled = !live;
+      });
+      simulateApprovalButton.addEventListener("click", () =>
+        simulate("approval_revoke_impact"),
+      );
+      simulatePortfolioButton.addEventListener("click", () =>
+        simulate("portfolio_adjustment"),
+      );
+      commitButton.addEventListener("click", commitAssessment);
+      guardTestButton.addEventListener("click", guardBadCandidate);
+      walletAddress.disabled = true;
+      pageSize.disabled = true;
+      maxPages.disabled = true;
+      checkHealth().then(scan);
+    </script>
+  </body>
+</html>

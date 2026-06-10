@@ -1,0 +1,64 @@
+{
+  "tools": [
+    {
+      "name": "scan_wallet_risk",
+      "description": "Return a Mantle wallet risk assessment from a demo fixture.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "get_wallet_exposure",
+      "description": "Return known-token balances and exposure source availability.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "get_approval_risks",
+      "description": "Return active approval risk rows.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "get_suspicious_transfers",
+      "description": "Return suspicious transfer candidates.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "get_rwa_yield_risks",
+      "description": "Return RWA/yield exposure payload and related limitations.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "get_evidence_bundle",
+      "description": "Return evidence bundle for a wallet risk assessment.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "get_benchmark_history",
+      "description": "Return local benchmark records. Optional walletHash argument.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "record_wallet_assessment",
+      "description": "P0 MCP read-only projection. Returns instructions for REST commit; does not mutate state.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    }
+  ],
+  "safety": {
+    "mcpMode": "read_only",
+    "realExecutionAllowed": false
+  }
+}

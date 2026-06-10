@@ -1,0 +1,280 @@
+{
+  "fixtureId": "high_risk_wallet",
+  "description": "Main demo fixture with unlimited unknown approval, suspicious dust transfer, and high mETH/cmETH exposure.",
+  "dataMode": "demo",
+  "chainId": 5000,
+  "wallet": {
+    "address": "0x1000000000000000000000000000000000000003",
+    "walletHash": "0xwallet_hash_high_001"
+  },
+  "dataCompleteness": {
+    "nativeBalance": "available",
+    "knownTokenBalances": "available",
+    "fullTokenInventory": "not_supported_p0",
+    "approvalEvents": "partial",
+    "activeAllowanceConfirmation": "available",
+    "transactionHistory": "partial",
+    "transferLogs": "partial",
+    "spenderLabels": "partial",
+    "tokenSecurity": "partial",
+    "defiPositions": "not_supported_p0",
+    "rwaYieldExposure": "partial"
+  },
+  "sourceAvailability": {
+    "mantleRpc": {
+      "status": "available",
+      "limitation": "Known-token balances, approvals, and bounded logs only."
+    },
+    "goPlus": {
+      "status": "partial",
+      "limitation": "Unknown spender label remains unknown, not safe."
+    },
+    "coinGecko": {
+      "status": "available",
+      "limitation": "Price-only source."
+    },
+    "defiLlama": {
+      "status": "available",
+      "limitation": "Price and TVL context only."
+    },
+    "moralis": {
+      "status": "unavailable",
+      "limitation": "No indexed wallet history in P0."
+    }
+  },
+  "balances": [
+    {
+      "symbol": "MNT",
+      "tokenAddress": "native",
+      "balanceRaw": "80000000000000000000",
+      "balance": 80,
+      "priceUsd": 1.1,
+      "valueUsd": 88,
+      "evidenceId": "ev_high_mnt_balance"
+    },
+    {
+      "symbol": "USDT",
+      "tokenAddress": "0x0000000000000000000000000000000000000a04",
+      "balanceRaw": "6200000000",
+      "balance": 6200,
+      "priceUsd": 1,
+      "valueUsd": 6200,
+      "evidenceId": "ev_high_usdt_balance"
+    },
+    {
+      "symbol": "mETH",
+      "tokenAddress": "0x0000000000000000000000000000000000000a02",
+      "balanceRaw": "1500000000000000000",
+      "balance": 1.5,
+      "priceUsd": 3600,
+      "valueUsd": 5400,
+      "evidenceId": "ev_high_meth_balance"
+    },
+    {
+      "symbol": "cmETH",
+      "tokenAddress": "0x0000000000000000000000000000000000000a05",
+      "balanceRaw": "400000000000000000",
+      "balance": 0.4,
+      "priceUsd": 3700,
+      "valueUsd": 1480,
+      "evidenceId": "ev_high_cmeth_balance"
+    }
+  ],
+  "approvals": [
+    {
+      "token": "USDT",
+      "tokenAddress": "0x0000000000000000000000000000000000000a04",
+      "spender": "0x9999999999999999999999999999999999999999",
+      "spenderLabel": null,
+      "allowanceRaw": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+      "allowanceUsd": 6200,
+      "isUnlimited": true,
+      "isActive": true,
+      "source": "rpc_logs_allowance",
+      "dataCoverage": "known_token_only",
+      "evidenceId": "ev_high_unlimited_approval"
+    }
+  ],
+  "transfers": [
+    {
+      "transferId": "transfer_high_dust_lookalike",
+      "transferType": "dust",
+      "token": "USDT",
+      "amount": "0.000001",
+      "counterparty": "0x1000000000000000000000000000000000000004",
+      "pattern": "lookalike_address_dust",
+      "riskLevel": "High",
+      "evidenceId": "ev_high_dust_transfer"
+    }
+  ],
+  "rwaYieldExposure": {
+    "mETHPct": 45.6,
+    "cmETHPct": 12.5,
+    "usdYPct": 0,
+    "mUSDPct": 0,
+    "liquidityWarning": true,
+    "evidenceIds": ["ev_high_meth_balance", "ev_high_cmeth_balance", "ev_high_rwa_rule"]
+  },
+  "evidence": [
+    {
+      "evidenceId": "ev_high_usdt_balance",
+      "type": "balance",
+      "claimText": "USDT is a high-value known-token balance in the wallet.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.balanceOf",
+      "rawData": {
+        "balanceRaw": "6200000000"
+      },
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_high_usdt_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "Known-token allowlist only."
+    },
+    {
+      "evidenceId": "ev_high_unlimited_approval",
+      "type": "approval",
+      "claimText": "USDT has an active unlimited approval to an unknown spender.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.allowance",
+      "rawData": {
+        "spender": "0x9999999999999999999999999999999999999999",
+        "allowanceRaw": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+        "isUnlimited": true
+      },
+      "txHash": "0xapproval00000000000000000000000000000000000000000000000000000001",
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_high_unlimited_approval_hash",
+      "dataQuality": "mock",
+      "limitation": "Approval event was followed by allowance confirmation."
+    },
+    {
+      "evidenceId": "ev_high_dust_transfer",
+      "type": "transfer",
+      "claimText": "A tiny incoming transfer came from a lookalike address.",
+      "source": "Mantle RPC",
+      "endpoint": "eth_getLogs Transfer",
+      "rawData": {
+        "amount": "0.000001",
+        "counterparty": "0x1000000000000000000000000000000000000004",
+        "pattern": "lookalike_address_dust"
+      },
+      "txHash": "0xdust000000000000000000000000000000000000000000000000000000000001",
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_high_dust_transfer_hash",
+      "dataQuality": "mock",
+      "limitation": "Recent known-token transfer logs only."
+    },
+    {
+      "evidenceId": "ev_high_meth_balance",
+      "type": "balance",
+      "claimText": "mETH is a major Mantle yield asset exposure in this wallet.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.balanceOf",
+      "rawData": {
+        "balanceRaw": "1500000000000000000"
+      },
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_high_meth_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "mETH is treated as Mantle liquid staking/yield exposure, not RWA."
+    },
+    {
+      "evidenceId": "ev_high_cmeth_balance",
+      "type": "balance",
+      "claimText": "cmETH balance is above the P0 warning threshold.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.balanceOf",
+      "rawData": {
+        "balanceRaw": "400000000000000000"
+      },
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_high_cmeth_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "P0 uses a rule-based cmETH warning."
+    },
+    {
+      "evidenceId": "ev_high_rwa_rule",
+      "type": "rwa_yield",
+      "claimText": "mETH and cmETH concentration triggers a Mantle yield exposure warning.",
+      "source": "RWA/Yield Module",
+      "endpoint": "rule:rwa_yield_exposure",
+      "rawData": {
+        "mETHPct": 45.6,
+        "cmETHPct": 12.5,
+        "liquidityWarning": true
+      },
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_high_rwa_rule_hash",
+      "dataQuality": "mock",
+      "limitation": "P0 partially verifies RWA/yield context and does not provide yield advice."
+    }
+  ],
+  "expectedAssessment": {
+    "assessmentId": "assessment_demo_high_001",
+    "walletRiskScore": 68,
+    "riskLevel": "High",
+    "dataConfidence": 0.85,
+    "subScores": {
+      "approvalRisk": 80,
+      "suspiciousTransferRisk": 75,
+      "assetConcentrationRisk": 45,
+      "defiExposureStub": 0,
+      "rwaYieldRisk": 60
+    },
+    "topRisks": [
+      {
+        "riskId": "risk_high_unlimited_approval",
+        "type": "approval",
+        "severity": "High",
+        "claimText": "USDT has an active unlimited approval to an unknown spender.",
+        "scoreImpact": 80,
+        "evidenceIds": ["ev_high_unlimited_approval", "ev_high_usdt_balance"]
+      },
+      {
+        "riskId": "risk_high_dust_transfer",
+        "type": "transfer",
+        "severity": "High",
+        "claimText": "A tiny incoming transfer from a lookalike address may be address poisoning.",
+        "scoreImpact": 75,
+        "evidenceIds": ["ev_high_dust_transfer"]
+      },
+      {
+        "riskId": "risk_high_meth_cmeth_exposure",
+        "type": "rwa_yield",
+        "severity": "High",
+        "claimText": "mETH and cmETH make up a large part of the known-token portfolio.",
+        "scoreImpact": 60,
+        "evidenceIds": ["ev_high_meth_balance", "ev_high_cmeth_balance", "ev_high_rwa_rule"]
+      }
+    ],
+    "suggestedActions": [
+      {
+        "actionId": "act_high_sim_revoke_usdt",
+        "actionType": "SIMULATE_REVOKE_APPROVAL",
+        "label": "Simulate revoke impact for USDT approval",
+        "executionMode": "simulation_only",
+        "evidenceIds": ["ev_high_unlimited_approval", "ev_high_usdt_balance"]
+      },
+      {
+        "actionId": "act_high_mark_suspicious",
+        "actionType": "MARK_ADDRESS_SUSPICIOUS",
+        "label": "Mark lookalike counterparty as suspicious",
+        "executionMode": "view_only",
+        "evidenceIds": ["ev_high_dust_transfer"]
+      },
+      {
+        "actionId": "act_high_sim_portfolio",
+        "actionType": "SIMULATE_REDUCE_METH_INCREASE_MUSD",
+        "label": "Simulate lower mETH/cmETH exposure",
+        "executionMode": "simulation_only",
+        "evidenceIds": ["ev_high_meth_balance", "ev_high_cmeth_balance", "ev_high_rwa_rule"]
+      }
+    ],
+    "dataCoverage": "partial",
+    "assessmentHash": "0xassessment_demo_high_001_hash",
+    "onChainRecord": {
+      "assessmentHash": "0xassessment_demo_high_001_hash",
+      "status": "queued"
+    }
+  }
+}

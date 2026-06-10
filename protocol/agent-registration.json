@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "mantlelens.agent_registration.v1",
+  "agentId": "mantlelens-wallet-guard-demo",
+  "name": "MantleLens Wallet Guard",
+  "version": "0.10.0",
+  "description": "Evidence-grounded, simulation-only wallet risk agent for Mantle.",
+  "agentURI": "http://127.0.0.1:8765/.well-known/agent-card.json",
+  "serviceURI": "http://127.0.0.1:8765",
+  "chainId": 5000,
+  "capabilities": [
+    "wallet_risk_scan",
+    "approval_risk_detection",
+    "suspicious_transfer_detection",
+    "portfolio_exposure_scoring",
+    "rwa_yield_risk_scoring",
+    "evidence_bundle",
+    "simulation_only_actions",
+    "benchmark_history"
+  ],
+  "safety": {
+    "defaultMode": "view_only_simulation_only",
+    "realExecutionAllowed": false,
+    "mcpMode": "read_only",
+    "claimsRequireEvidence": true
+  },
+  "endpoints": {
+    "agentCard": "http://127.0.0.1:8765/.well-known/agent-card.json",
+    "mcp": "http://127.0.0.1:8765/mcp",
+    "scan": "http://127.0.0.1:8765/api/wallet/scan",
+    "benchmark": "http://127.0.0.1:8765/api/benchmark"
+  }
+}

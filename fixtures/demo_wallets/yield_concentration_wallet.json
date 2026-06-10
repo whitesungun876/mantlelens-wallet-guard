@@ -1,0 +1,159 @@
+{
+  "fixtureId": "yield_concentration_wallet",
+  "description": "Replay benchmark case: concentrated mETH and cmETH exposure without approval or transfer anomalies.",
+  "dataMode": "demo",
+  "chainId": 5000,
+  "wallet": {
+    "address": "0x1000000000000000000000000000000000000105",
+    "walletHash": "0xwallet_hash_replay_yield_001"
+  },
+  "dataCompleteness": {
+    "nativeBalance": "available",
+    "knownTokenBalances": "available",
+    "fullTokenInventory": "partial",
+    "approvalEvents": "available",
+    "activeAllowanceConfirmation": "available",
+    "transactionHistory": "partial",
+    "transferLogs": "available",
+    "spenderLabels": "available",
+    "tokenSecurity": "available",
+    "defiPositions": "not_supported_p0",
+    "rwaYieldExposure": "available"
+  },
+  "sourceAvailability": {
+    "mantleRpc": {
+      "status": "available",
+      "limitation": "Known-token balances and yield asset exposure are available in this replay case."
+    },
+    "goPlus": {
+      "status": "available",
+      "limitation": "Clean result is a signal, not a guarantee."
+    },
+    "coinGecko": {
+      "status": "available",
+      "limitation": "Price-only source."
+    },
+    "moralis": {
+      "status": "partial",
+      "limitation": "Full token inventory is partial in this replay case."
+    },
+    "etherscanV2": {
+      "status": "partial",
+      "limitation": "Replay fixture models bounded account history."
+    }
+  },
+  "balances": [
+    {
+      "symbol": "MNT",
+      "tokenAddress": "native",
+      "balanceRaw": "25000000000000000000",
+      "balance": 25,
+      "priceUsd": 1.1,
+      "valueUsd": 27.5,
+      "evidenceId": "ev_yield_mnt_balance"
+    },
+    {
+      "symbol": "mETH",
+      "tokenAddress": "0x0000000000000000000000000000000000000a02",
+      "balanceRaw": "1200000000000000000",
+      "balance": 1.2,
+      "priceUsd": 3600,
+      "valueUsd": 4320,
+      "evidenceId": "ev_yield_meth_balance"
+    },
+    {
+      "symbol": "cmETH",
+      "tokenAddress": "0x0000000000000000000000000000000000000a05",
+      "balanceRaw": "900000000000000000",
+      "balance": 0.9,
+      "priceUsd": 3700,
+      "valueUsd": 3330,
+      "evidenceId": "ev_yield_cmeth_balance"
+    },
+    {
+      "symbol": "USDC",
+      "tokenAddress": "0x0000000000000000000000000000000000000a01",
+      "balanceRaw": "600000000",
+      "balance": 600,
+      "priceUsd": 1,
+      "valueUsd": 600,
+      "evidenceId": "ev_yield_usdc_balance"
+    }
+  ],
+  "approvals": [
+    {
+      "token": "USDC",
+      "tokenAddress": "0x0000000000000000000000000000000000000a01",
+      "spender": "0x2000000000000000000000000000000000000105",
+      "spenderLabel": "known_router",
+      "allowanceRaw": "0",
+      "allowanceUsd": 0,
+      "isUnlimited": false,
+      "isActive": false,
+      "source": "rpc_logs_allowance",
+      "dataCoverage": "known_token_only",
+      "evidenceId": "ev_yield_usdc_allowance"
+    }
+  ],
+  "transfers": [],
+  "rwaYieldExposure": {
+    "mETHPct": 52,
+    "cmETHPct": 40,
+    "usdYPct": 0,
+    "mUSDPct": 0,
+    "liquidityWarning": true,
+    "evidenceIds": ["ev_yield_meth_balance", "ev_yield_cmeth_balance"]
+  },
+  "evidence": [
+    {
+      "evidenceId": "ev_yield_meth_balance",
+      "type": "balance",
+      "claimText": "mETH is a large share of the known-token portfolio.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.balanceOf",
+      "rawData": {
+        "balanceRaw": "1200000000000000000"
+      },
+      "timestamp": "2026-06-08T00:00:00Z",
+      "evidenceHash": "0xev_yield_meth_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "Replay fixture. Known-token inventory only."
+    },
+    {
+      "evidenceId": "ev_yield_cmeth_balance",
+      "type": "balance",
+      "claimText": "cmETH is a large share of the known-token portfolio.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.balanceOf",
+      "rawData": {
+        "balanceRaw": "900000000000000000"
+      },
+      "timestamp": "2026-06-08T00:00:00Z",
+      "evidenceHash": "0xev_yield_cmeth_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "Replay fixture. Known-token inventory only."
+    },
+    {
+      "evidenceId": "ev_yield_usdc_allowance",
+      "type": "approval",
+      "claimText": "USDC approval was checked and current allowance is zero.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.allowance",
+      "rawData": {
+        "allowanceRaw": "0"
+      },
+      "timestamp": "2026-06-08T00:00:00Z",
+      "evidenceHash": "0xev_yield_usdc_allowance_hash",
+      "dataQuality": "mock",
+      "limitation": "Allowance confirmation is required before declaring an approval inactive."
+    }
+  ],
+  "expectedAssessment": {
+    "assessmentId": "assessment_demo_yield_001",
+    "walletRiskScore": 38,
+    "riskLevel": "High",
+    "dataConfidence": 0.76,
+    "dataCoverage": "known-token-yield-assets",
+    "assessmentHash": "0xassessment_demo_yield_001_hash"
+  }
+}

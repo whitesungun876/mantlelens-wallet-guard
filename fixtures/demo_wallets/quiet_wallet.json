@@ -1,0 +1,109 @@
+{
+  "fixtureId": "quiet_wallet",
+  "description": "Replay benchmark case: quiet wallet with insufficient activity and partial indexed coverage. It should be treated as unknown coverage, not automatically safe.",
+  "dataMode": "demo",
+  "chainId": 5000,
+  "wallet": {
+    "address": "0x1000000000000000000000000000000000000106",
+    "walletHash": "0xwallet_hash_replay_quiet_001"
+  },
+  "dataCompleteness": {
+    "nativeBalance": "available",
+    "knownTokenBalances": "partial",
+    "fullTokenInventory": "unavailable",
+    "approvalEvents": "unavailable",
+    "activeAllowanceConfirmation": "partial",
+    "transactionHistory": "unavailable",
+    "transferLogs": "unavailable",
+    "spenderLabels": "unavailable",
+    "tokenSecurity": "partial",
+    "defiPositions": "not_supported_p0",
+    "rwaYieldExposure": "partial"
+  },
+  "sourceAvailability": {
+    "mantleRpc": {
+      "status": "available",
+      "limitation": "Native balance is available, but known-token and allowance coverage is partial in this replay case."
+    },
+    "goPlus": {
+      "status": "partial",
+      "limitation": "Token security and spender context are incomplete."
+    },
+    "coinGecko": {
+      "status": "available",
+      "limitation": "Price-only source."
+    },
+    "moralis": {
+      "status": "unavailable",
+      "limitation": "Indexed inventory and wallet history are unavailable for this replay case."
+    },
+    "etherscanV2": {
+      "status": "unavailable",
+      "limitation": "Approval and transfer history pages are unavailable in this replay case."
+    }
+  },
+  "balances": [
+    {
+      "symbol": "MNT",
+      "tokenAddress": "native",
+      "balanceRaw": "900000000000000000",
+      "balance": 0.9,
+      "priceUsd": null,
+      "valueUsd": 0,
+      "evidenceId": "ev_quiet_mnt_balance"
+    }
+  ],
+  "approvals": [],
+  "transfers": [],
+  "rwaYieldExposure": {
+    "mETHPct": 0,
+    "cmETHPct": 0,
+    "usdYPct": 0,
+    "mUSDPct": 0,
+    "liquidityWarning": false,
+    "evidenceIds": []
+  },
+  "evidence": [
+    {
+      "evidenceId": "ev_quiet_mnt_balance",
+      "type": "balance",
+      "claimText": "MNT native balance was read, but indexed wallet activity was unavailable.",
+      "source": "Mantle RPC",
+      "endpoint": "eth_getBalance",
+      "rawData": {
+        "balanceRaw": "900000000000000000"
+      },
+      "timestamp": "2026-06-08T00:00:00Z",
+      "evidenceHash": "0xev_quiet_mnt_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "Replay fixture. Quiet activity and missing indexed data are unknown, not safe."
+    }
+  ],
+  "expectedAssessment": {
+    "assessmentId": "assessment_demo_quiet_001",
+    "walletRiskScore": 22,
+    "riskLevel": "Moderate",
+    "dataConfidence": 0.55,
+    "topRisks": [
+      {
+        "riskId": "risk_quiet_activity_unknown",
+        "type": "wallet_activity",
+        "severity": "Moderate",
+        "claimText": "Wallet activity is insufficient and indexed history is unavailable, so the quiet profile is unknown rather than safe.",
+        "scoreImpact": 20,
+        "evidenceIds": ["ev_quiet_mnt_balance"]
+      }
+    ],
+    "suggestedActions": [
+      {
+        "actionId": "act_quiet_check_coverage",
+        "actionType": "CHECK_SOURCE_COVERAGE",
+        "label": "Check source coverage",
+        "executionMode": "view_only",
+        "evidenceIds": ["ev_quiet_mnt_balance"]
+      }
+    ],
+    "dataCoverage": "insufficient-activity",
+    "assessmentHash": "0xassessment_demo_quiet_001_hash"
+  }
+}

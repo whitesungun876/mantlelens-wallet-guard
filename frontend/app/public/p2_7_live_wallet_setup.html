@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MantleLens P2.7 Live Demo Wallet Setup</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f8f6;
+        --panel: #ffffff;
+        --ink: #17201d;
+        --muted: #62736f;
+        --line: #d7e3df;
+        --accent: #087f73;
+        --accent-dark: #06665d;
+        --warn: #9b6426;
+        --soft: #edf6f3;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      main {
+        width: min(1120px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 36px 0 56px;
+      }
+      header {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 44px);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+      p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 18px 50px rgba(18, 48, 42, 0.08);
+        padding: 22px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.68fr);
+        gap: 18px;
+      }
+      .steps {
+        display: grid;
+        gap: 14px;
+      }
+      .step {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fbfdfc;
+      }
+      .step h2 {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 0;
+        font-size: 17px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 10px;
+        background: var(--soft);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 750;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      button {
+        border: 0;
+        border-radius: 12px;
+        padding: 10px 14px;
+        background: var(--accent);
+        color: #fff;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      button.secondary {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+      code,
+      textarea,
+      input {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+      input,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: #fff;
+        color: var(--ink);
+        font-size: 13px;
+      }
+      textarea {
+        min-height: 128px;
+        resize: vertical;
+      }
+      .kv {
+        display: grid;
+        gap: 8px;
+      }
+      .kv div {
+        display: grid;
+        grid-template-columns: 160px minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+      }
+      .kv span {
+        color: var(--muted);
+      }
+      .mono {
+        overflow-wrap: anywhere;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 12px;
+      }
+      .note {
+        border: 1px solid #ead9bb;
+        border-radius: 14px;
+        background: #fff8ed;
+        color: var(--warn);
+        padding: 12px 14px;
+      }
+      .log {
+        display: grid;
+        gap: 8px;
+        max-height: 560px;
+        overflow: auto;
+      }
+      .log-entry {
+        border-left: 3px solid var(--accent);
+        padding: 8px 10px;
+        background: #f8fbfa;
+        border-radius: 8px;
+      }
+      a {
+        color: var(--accent-dark);
+        font-weight: 800;
+      }
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .kv div {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <span class="badge">Mantle Sepolia · chainId 5003 · wallet-confirmed only</span>
+        <h1>P2.7 live demo wallet setup</h1>
+        <p>
+          Prepare a real Mantle Sepolia wallet with a demo ERC20 balance, active allowance, transfer activity,
+          evidence-bound live scan, and a wallet-confirmed AssessmentLogger proof.
+        </p>
+      </header>
+
+      <section class="grid">
+        <div class="panel steps">
+          <div class="note">
+            This page never asks for wallet secrets. It never connects on page load. Every chain write below
+            uses <strong>eth_sendTransaction</strong> and requires an explicit wallet popup confirmation.
+          </div>
+
+          <article class="step">
+            <h2>1. Connect a fresh demo wallet <span class="badge" id="chainBadge">not connected</span></h2>
+            <p>Use a public Mantle Sepolia address funded with testnet MNT. Do not paste or upload secrets.</p>
+            <div class="actions">
+              <button id="connectWallet">Connect wallet</button>
+              <button class="secondary" id="switchNetwork" disabled>Switch to Mantle Sepolia</button>
+            </div>
+            <div class="kv">
+              <div><span>Demo wallet</span><strong class="mono" id="walletAddress">not connected</strong></div>
+            </div>
+          </article>
+
+          <article class="step">
+            <h2>2. Deploy demo token and spender <span class="badge">wallet popup</span></h2>
+            <p>The token gives the connected wallet a known-token balance. The spender is the approval target and sends the tiny transfer.</p>
+            <div class="actions">
+              <button id="deployToken" disabled>Deploy MLDT token</button>
+              <button id="deploySpender" disabled>Deploy demo spender</button>
+            </div>
+            <div class="kv">
+              <div><span>Token</span><strong class="mono" id="tokenAddress">pending</strong></div>
+              <div><span>Spender</span><strong class="mono" id="spenderAddress">pending</strong></div>
+            </div>
+          </article>
+
+          <article class="step">
+            <h2>3. Create balance, approval, and transfer evidence <span class="badge">wallet popup</span></h2>
+            <p>Approve unlimited MLDT, send a normal transfer to the spender, then ask the spender to send 0.000001 MLDT back.</p>
+            <div class="actions">
+              <button id="approveUnlimited" disabled>Approve unlimited</button>
+              <button id="normalTransfer" disabled>Normal transfer</button>
+              <button id="tinyTransfer" disabled>Tiny dust transfer</button>
+            </div>
+            <div class="kv">
+              <div><span>Approval tx</span><strong class="mono" id="approvalTx">pending</strong></div>
+              <div><span>Normal transfer tx</span><strong class="mono" id="normalTx">pending</strong></div>
+              <div><span>Tiny transfer tx</span><strong class="mono" id="dustTx">pending</strong></div>
+            </div>
+          </article>
+
+          <article class="step">
+            <h2>4. Add MLDT to MantleLens known-token allowlist <span class="badge">public config only</span></h2>
+            <p>Copy the public token address into your shell or .env, then restart the backend before running the live scan.</p>
+            <textarea id="envSnippet" readonly>MANTLE_CHAIN_ID=5003
+MANTLE_EXPLORER_BASE_URL=https://sepolia.mantlescan.xyz
+MANTLE_KNOWN_TOKENS_JSON=[]</textarea>
+            <div class="actions">
+              <button class="secondary" id="copyEnv" disabled>Copy allowlist snippet</button>
+            </div>
+          </article>
+
+          <article class="step">
+            <h2>5. Run read-only live scan <span class="badge">no wallet signing</span></h2>
+            <p>After restarting the backend with the allowlist, scan the public wallet address. Scan/page load never sends a transaction.</p>
+            <div class="actions">
+              <button id="runLiveScan" disabled>Run live scan</button>
+            </div>
+            <div class="kv">
+              <div><span>Assessment hash</span><strong class="mono" id="assessmentHash">pending</strong></div>
+              <div><span>Evidence bundle</span><strong class="mono" id="evidenceHash">pending</strong></div>
+              <div><span>Scan evidence</span><strong id="scanEvidence">pending</strong></div>
+            </div>
+          </article>
+
+          <article class="step">
+            <h2>6. Record and verify AssessmentLogger proof <span class="badge">wallet popup then read-only verify</span></h2>
+            <p>Generate calldata on the backend, confirm the transaction in your wallet, then verify the emitted record read-only.</p>
+            <div class="actions">
+              <button id="prepareRecord" disabled>Prepare record calldata</button>
+              <button id="sendRecord" disabled>Record assessment hash</button>
+              <button class="secondary" id="verifyRecord" disabled>Verify assessment</button>
+            </div>
+            <div class="kv">
+              <div><span>Assessment tx</span><strong class="mono" id="assessmentTx">pending</strong></div>
+              <div><span>Verification</span><strong id="verificationStatus">pending</strong></div>
+            </div>
+          </article>
+        </div>
+
+        <aside class="panel">
+          <h2 style="margin:0 0 12px">Run log</h2>
+          <div class="log" id="runLog"></div>
+        </aside>
+      </section>
+    </main>
+
+    <script>
+      const API_BASE = "http://127.0.0.1:8765";
+      const MANTLE_SEPOLIA_CHAIN_ID = "0x138b";
+      const MANTLE_SEPOLIA_RPC = "https://rpc.sepolia.mantle.xyz";
+      const EXPLORER = "https://sepolia.mantlescan.xyz";
+      const TOKEN_UNIT = 10n ** 18n;
+      const INITIAL_SUPPLY = 1000000n * TOKEN_UNIT;
+      const NORMAL_TRANSFER_AMOUNT = 10n * TOKEN_UNIT;
+      const DUST_TRANSFER_AMOUNT = 10n ** 12n;
+      const MAX_UINT256 = (1n << 256n) - 1n;
+
+      const state = {
+        artifacts: null,
+        account: null,
+        tokenAddress: null,
+        spenderAddress: null,
+        txs: {},
+        scan: null,
+        commitCalldata: null,
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      function log(message, detail) {
+        const entry = document.createElement("div");
+        entry.className = "log-entry";
+        entry.innerHTML = `<strong>${escapeHtml(message)}</strong>${detail ? `<div class="mono">${escapeHtml(detail)}</div>` : ""}`;
+        $("runLog").prepend(entry);
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+      }
+
+      function setText(id, value) {
+        $(id).textContent = value || "pending";
+      }
+
+      function explorerTx(txHash) {
+        return `${EXPLORER}/tx/${txHash}`;
+      }
+
+      function explorerAddress(address) {
+        return `${EXPLORER}/address/${address}`;
+      }
+
+      function linkedTx(txHash) {
+        if (!txHash) return "pending";
+        return `<a href="${explorerTx(txHash)}" target="_blank" rel="noreferrer">${txHash}</a>`;
+      }
+
+      function setLinkedTx(id, txHash) {
+        $(id).innerHTML = linkedTx(txHash);
+      }
+
+      function strip0x(value) {
+        return String(value || "").replace(/^0x/i, "");
+      }
+
+      function pad32(hex) {
+        return strip0x(hex).padStart(64, "0");
+      }
+
+      function encodeAddress(address) {
+        if (!/^0x[0-9a-fA-F]{40}$/.test(address || "")) throw new Error(`Invalid address: ${address}`);
+        return pad32(address);
+      }
+
+      function encodeUint(value) {
+        return value.toString(16).padStart(64, "0");
+      }
+
+      function selector(contractName, signature) {
+        const methods = state.artifacts.contracts[contractName].methodIdentifiers || {};
+        const found = methods[signature];
+        if (!found) throw new Error(`Missing selector for ${contractName}.${signature}`);
+        return found;
+      }
+
+      async function loadArtifacts() {
+        const response = await fetch("/p2_7_demo_contracts.json");
+        if (!response.ok) throw new Error("p2_7_demo_contracts.json is missing. Run scripts/build_p2_7_demo_contracts.py first.");
+        state.artifacts = await response.json();
+      }
+
+      async function walletRequest(method, params = []) {
+        if (!window.ethereum) throw new Error("No browser wallet found. Open this page in a browser with an EVM wallet extension.");
+        return window.ethereum.request({ method, params });
+      }
+
+      async function connectWallet() {
+        await loadArtifacts();
+        const accounts = await walletRequest("eth_requestAccounts");
+        state.account = accounts[0];
+        setText("walletAddress", state.account);
+        $("chainBadge").textContent = "wallet connected";
+        $("switchNetwork").disabled = false;
+        $("deployToken").disabled = false;
+        $("deploySpender").disabled = false;
+        updateEnvSnippet();
+        log("Wallet connected", state.account);
+      }
+
+      async function switchNetwork() {
+        try {
+          await walletRequest("wallet_switchEthereumChain", [{ chainId: MANTLE_SEPOLIA_CHAIN_ID }]);
+        } catch (error) {
+          if (error && error.code === 4902) {
+            await walletRequest("wallet_addEthereumChain", [
+              {
+                chainId: MANTLE_SEPOLIA_CHAIN_ID,
+                chainName: "Mantle Sepolia",
+                nativeCurrency: { name: "MNT", symbol: "MNT", decimals: 18 },
+                rpcUrls: [MANTLE_SEPOLIA_RPC],
+                blockExplorerUrls: [EXPLORER],
+              },
+            ]);
+          } else {
+            throw error;
+          }
+        }
+        const chainId = await walletRequest("eth_chainId");
+        $("chainBadge").textContent = chainId === MANTLE_SEPOLIA_CHAIN_ID ? "Mantle Sepolia ready" : `wrong chain ${chainId}`;
+        log("Network checked", chainId);
+      }
+
+      async function sendTransaction(tx) {
+        await switchNetwork();
+        const txHash = await walletRequest("eth_sendTransaction", [tx]);
+        log("Transaction submitted", txHash);
+        return txHash;
+      }
+
+      async function waitReceipt(txHash) {
+        for (let attempt = 0; attempt < 90; attempt += 1) {
+          const receipt = await walletRequest("eth_getTransactionReceipt", [txHash]);
+          if (receipt) return receipt;
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+        throw new Error(`Timed out waiting for receipt: ${txHash}`);
+      }
+
+      async function deployToken() {
+        const artifact = state.artifacts.contracts.MantleLensDemoToken;
+        const data = artifact.bytecode + encodeUint(INITIAL_SUPPLY);
+        const txHash = await sendTransaction({ from: state.account, data });
+        const receipt = await waitReceipt(txHash);
+        state.tokenAddress = receipt.contractAddress;
+        setText("tokenAddress", state.tokenAddress);
+        $("tokenAddress").innerHTML = `<a href="${explorerAddress(state.tokenAddress)}" target="_blank" rel="noreferrer">${state.tokenAddress}</a>`;
+        updateReadiness();
+        updateEnvSnippet();
+        log("MLDT token deployed", `${state.tokenAddress} · ${txHash}`);
+      }
+
+      async function deploySpender() {
+        const artifact = state.artifacts.contracts.MantleLensDemoSpender;
+        const txHash = await sendTransaction({ from: state.account, data: artifact.bytecode });
+        const receipt = await waitReceipt(txHash);
+        state.spenderAddress = receipt.contractAddress;
+        setText("spenderAddress", state.spenderAddress);
+        $("spenderAddress").innerHTML = `<a href="${explorerAddress(state.spenderAddress)}" target="_blank" rel="noreferrer">${state.spenderAddress}</a>`;
+        updateReadiness();
+        log("Demo spender deployed", `${state.spenderAddress} · ${txHash}`);
+      }
+
+      async function approveUnlimited() {
+        const data = "0x095ea7b3" + encodeAddress(state.spenderAddress) + encodeUint(MAX_UINT256);
+        const txHash = await sendTransaction({ from: state.account, to: state.tokenAddress, data });
+        state.txs.approval = txHash;
+        setLinkedTx("approvalTx", txHash);
+        log("Unlimited approval created", txHash);
+      }
+
+      async function normalTransfer() {
+        const data = "0xa9059cbb" + encodeAddress(state.spenderAddress) + encodeUint(NORMAL_TRANSFER_AMOUNT);
+        const txHash = await sendTransaction({ from: state.account, to: state.tokenAddress, data });
+        state.txs.normalTransfer = txHash;
+        setLinkedTx("normalTx", txHash);
+        log("Normal transfer created", txHash);
+      }
+
+      async function tinyTransfer() {
+        const sig = selector("MantleLensDemoSpender", "sendDust(address,address,uint256)");
+        const data = "0x" + sig + encodeAddress(state.tokenAddress) + encodeAddress(state.account) + encodeUint(DUST_TRANSFER_AMOUNT);
+        const txHash = await sendTransaction({ from: state.account, to: state.spenderAddress, data });
+        state.txs.dustTransfer = txHash;
+        setLinkedTx("dustTx", txHash);
+        log("Tiny dust transfer created", txHash);
+      }
+
+      function updateEnvSnippet() {
+        const tokenEntry = state.tokenAddress
+          ? `[{"symbol":"MLDT","tokenAddress":"${state.tokenAddress}","decimals":18,"priceUsd":1}]`
+          : "[]";
+        $("envSnippet").value = [
+          "MANTLE_CHAIN_ID=5003",
+          `MANTLE_RPC_URL=${MANTLE_SEPOLIA_RPC}`,
+          `MANTLE_EXPLORER_BASE_URL=${EXPLORER}`,
+          `MANTLE_KNOWN_TOKENS_JSON='${tokenEntry}'`,
+          "# Keep backend signer variables empty for wallet-popup proof flow.",
+        ].join("\n");
+        $("copyEnv").disabled = !state.tokenAddress;
+      }
+
+      function updateReadiness() {
+        const hasContracts = Boolean(state.account && state.tokenAddress && state.spenderAddress);
+        $("approveUnlimited").disabled = !hasContracts;
+        $("normalTransfer").disabled = !hasContracts;
+        $("tinyTransfer").disabled = !hasContracts;
+        $("runLiveScan").disabled = !state.account;
+      }
+
+      async function copyEnv() {
+        await navigator.clipboard.writeText($("envSnippet").value);
+        log("Allowlist snippet copied", "Restart the backend after applying it.");
+      }
+
+      async function runLiveScan() {
+        const response = await fetch(`${API_BASE}/api/wallet/scan`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            dataMode: "live",
+            scanMode: "live",
+            targetId: "mantle-sepolia",
+            chainId: 5003,
+            walletAddress: state.account,
+            includeExplanation: true,
+          }),
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.message || payload.error || "live scan failed");
+        state.scan = payload;
+        setText("assessmentHash", payload.assessment?.assessmentHash);
+        setText("evidenceHash", payload.assessment?.evidenceBundleHash || payload.evidenceBundle?.bundleHash);
+        setText("scanEvidence", summarizeScanEvidence(payload));
+        $("prepareRecord").disabled = false;
+        log("Read-only live scan completed", payload.assessment?.assessmentHash);
+      }
+
+      function summarizeScanEvidence(payload) {
+        const evidence = payload.evidenceBundle?.evidence || [];
+        const approvals = JSON.stringify(payload.approvals || payload.assessment?.approvals || evidence).includes("allowance");
+        const txHash = evidence.some((item) => JSON.stringify(item).includes("txHash")) || Boolean(state.txs.normalTransfer || state.txs.dustTransfer);
+        const inventory = JSON.stringify(payload.inventory || payload.balances || evidence).includes("MLDT");
+        return [
+          inventory ? "MLDT balance visible" : "token balance pending index/read",
+          approvals ? "allowance evidence visible" : "allowance evidence pending",
+          txHash ? "transfer tx hash available" : "transfer tx hash pending indexer",
+        ].join(" · ");
+      }
+
+      async function prepareRecord() {
+        const response = await fetch(`${API_BASE}/api/assessment/commit/calldata`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ assessment: state.scan.assessment }),
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.message || payload.error || "calldata unavailable");
+        state.commitCalldata = payload;
+        $("sendRecord").disabled = false;
+        log("AssessmentLogger calldata prepared", `${payload.to} · ${payload.data.slice(0, 18)}...`);
+      }
+
+      async function sendRecord() {
+        const txHash = await sendTransaction({
+          from: state.account,
+          to: state.commitCalldata.to,
+          value: state.commitCalldata.value || "0x0",
+          data: state.commitCalldata.data,
+        });
+        state.txs.assessment = txHash;
+        setLinkedTx("assessmentTx", txHash);
+        $("verifyRecord").disabled = false;
+        log("Assessment hash recorded", txHash);
+      }
+
+      async function verifyRecord() {
+        const txHash = state.txs.assessment;
+        const assessmentHash = state.scan?.assessment?.assessmentHash || "";
+        const response = await fetch(
+          `${API_BASE}/api/assessment/commit/verify?tx_hash=${encodeURIComponent(txHash)}&assessment_hash=${encodeURIComponent(assessmentHash)}`
+        );
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.message || payload.error || "verify failed");
+        setText("verificationStatus", payload.verificationStatus || payload.status);
+        log("Assessment verification completed", `${payload.verificationStatus || payload.status} · ${payload.eventName || "no event yet"}`);
+      }
+
+      function bind(id, handler) {
+        $(id).addEventListener("click", async () => {
+          try {
+            await handler();
+          } catch (error) {
+            log("Action failed", error && error.message ? error.message : String(error));
+          }
+        });
+      }
+
+      bind("connectWallet", connectWallet);
+      bind("switchNetwork", switchNetwork);
+      bind("deployToken", deployToken);
+      bind("deploySpender", deploySpender);
+      bind("approveUnlimited", approveUnlimited);
+      bind("normalTransfer", normalTransfer);
+      bind("tinyTransfer", tinyTransfer);
+      bind("copyEnv", copyEnv);
+      bind("runLiveScan", runLiveScan);
+      bind("prepareRecord", prepareRecord);
+      bind("sendRecord", sendRecord);
+      bind("verifyRecord", verifyRecord);
+
+      loadArtifacts()
+        .then(() => log("Artifacts loaded", "Ready. Connect wallet when you want to start."))
+        .catch((error) => log("Artifacts missing", error.message));
+    </script>
+  </body>
+</html>

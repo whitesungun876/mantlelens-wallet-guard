@@ -1,0 +1,200 @@
+{
+  "fixtureId": "moderate_partial_wallet",
+  "description": "Partial scan fixture with high single-asset concentration and missing indexed history.",
+  "dataMode": "demo",
+  "chainId": 5000,
+  "wallet": {
+    "address": "0x1000000000000000000000000000000000000002",
+    "walletHash": "0xwallet_hash_moderate_001"
+  },
+  "dataCompleteness": {
+    "nativeBalance": "available",
+    "knownTokenBalances": "available",
+    "fullTokenInventory": "not_supported_p0",
+    "approvalEvents": "partial",
+    "activeAllowanceConfirmation": "available",
+    "transactionHistory": "partial",
+    "transferLogs": "partial",
+    "spenderLabels": "partial",
+    "tokenSecurity": "partial",
+    "defiPositions": "not_supported_p0",
+    "rwaYieldExposure": "partial"
+  },
+  "sourceAvailability": {
+    "mantleRpc": {
+      "status": "available",
+      "limitation": "Bounded logs only."
+    },
+    "goPlus": {
+      "status": "partial",
+      "limitation": "Some spender labels unavailable."
+    },
+    "coinGecko": {
+      "status": "available",
+      "limitation": "Price-only source."
+    },
+    "moralis": {
+      "status": "unavailable",
+      "limitation": "Indexed history unavailable in P0."
+    }
+  },
+  "balances": [
+    {
+      "symbol": "MNT",
+      "tokenAddress": "native",
+      "balanceRaw": "30000000000000000000",
+      "balance": 30,
+      "priceUsd": 1.1,
+      "valueUsd": 33,
+      "evidenceId": "ev_mod_mnt_balance"
+    },
+    {
+      "symbol": "mETH",
+      "tokenAddress": "0x0000000000000000000000000000000000000a02",
+      "balanceRaw": "900000000000000000",
+      "balance": 0.9,
+      "priceUsd": 3600,
+      "valueUsd": 3240,
+      "evidenceId": "ev_mod_meth_balance"
+    },
+    {
+      "symbol": "mUSD",
+      "tokenAddress": "0x0000000000000000000000000000000000000a03",
+      "balanceRaw": "450000000",
+      "balance": 450,
+      "priceUsd": 1,
+      "valueUsd": 450,
+      "evidenceId": "ev_mod_musd_balance"
+    }
+  ],
+  "approvals": [
+    {
+      "token": "mUSD",
+      "tokenAddress": "0x0000000000000000000000000000000000000a03",
+      "spender": "0x2000000000000000000000000000000000000002",
+      "spenderLabel": null,
+      "allowanceRaw": "250000000",
+      "allowanceUsd": 250,
+      "isUnlimited": false,
+      "isActive": true,
+      "source": "rpc_logs_allowance",
+      "dataCoverage": "partial",
+      "evidenceId": "ev_mod_musd_allowance"
+    }
+  ],
+  "transfers": [
+    {
+      "transferId": "transfer_mod_new_recipient",
+      "transferType": "outgoing",
+      "token": "MNT",
+      "amount": "12",
+      "counterparty": "0x3000000000000000000000000000000000000002",
+      "pattern": "new_recipient",
+      "riskLevel": "Moderate",
+      "evidenceId": "ev_mod_transfer_new_recipient"
+    }
+  ],
+  "evidence": [
+    {
+      "evidenceId": "ev_mod_meth_balance",
+      "type": "balance",
+      "claimText": "mETH is the largest known-token balance in this wallet.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.balanceOf",
+      "rawData": {
+        "balanceRaw": "900000000000000000"
+      },
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_mod_meth_balance_hash",
+      "dataQuality": "mock",
+      "limitation": "Known-token allowlist only."
+    },
+    {
+      "evidenceId": "ev_mod_musd_allowance",
+      "type": "approval",
+      "claimText": "mUSD active allowance was confirmed for an unknown spender.",
+      "source": "Mantle RPC",
+      "endpoint": "ERC20.allowance",
+      "rawData": {
+        "allowanceRaw": "250000000"
+      },
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_mod_musd_allowance_hash",
+      "dataQuality": "mock",
+      "limitation": "Spender label is unavailable, so it is unknown rather than safe."
+    },
+    {
+      "evidenceId": "ev_mod_transfer_new_recipient",
+      "type": "transfer",
+      "claimText": "A recent outgoing MNT transfer went to a new recipient.",
+      "source": "Mantle RPC",
+      "endpoint": "eth_getLogs Transfer",
+      "rawData": {
+        "amount": "12",
+        "counterparty": "0x3000000000000000000000000000000000000002"
+      },
+      "txHash": "0xmodtransfer000000000000000000000000000000000000000000000000000001",
+      "timestamp": "2026-06-07T00:00:00Z",
+      "evidenceHash": "0xev_mod_transfer_new_recipient_hash",
+      "dataQuality": "mock",
+      "limitation": "Recent known-token transfer logs only."
+    }
+  ],
+  "expectedAssessment": {
+    "assessmentId": "assessment_demo_moderate_001",
+    "walletRiskScore": 44,
+    "riskLevel": "Moderate",
+    "dataConfidence": 0.68,
+    "subScores": {
+      "approvalRisk": 25,
+      "suspiciousTransferRisk": 25,
+      "assetConcentrationRisk": 45,
+      "defiExposureStub": 0,
+      "rwaYieldRisk": 35
+    },
+    "topRisks": [
+      {
+        "riskId": "risk_mod_meth_concentration",
+        "type": "concentration",
+        "severity": "Moderate",
+        "claimText": "mETH is a large share of the known-token portfolio.",
+        "scoreImpact": 45,
+        "evidenceIds": ["ev_mod_meth_balance"]
+      },
+      {
+        "riskId": "risk_mod_unknown_spender",
+        "type": "approval",
+        "severity": "Moderate",
+        "claimText": "An active mUSD allowance exists for an unknown spender.",
+        "scoreImpact": 25,
+        "evidenceIds": ["ev_mod_musd_allowance"]
+      },
+      {
+        "riskId": "risk_mod_partial_scan",
+        "type": "data_quality",
+        "severity": "Moderate",
+        "claimText": "Indexed history is unavailable, so this is a partial scan.",
+        "scoreImpact": 0,
+        "evidenceIds": ["ev_mod_transfer_new_recipient"]
+      }
+    ],
+    "suggestedActions": [
+      {
+        "actionId": "act_mod_review_spender",
+        "actionType": "REVIEW_SPENDER",
+        "label": "Review unknown spender",
+        "executionMode": "view_only",
+        "evidenceIds": ["ev_mod_musd_allowance"]
+      },
+      {
+        "actionId": "act_mod_sim_portfolio",
+        "actionType": "SIMULATE_REDUCE_METH_INCREASE_MUSD",
+        "label": "Simulate lower mETH concentration",
+        "executionMode": "simulation_only",
+        "evidenceIds": ["ev_mod_meth_balance"]
+      }
+    ],
+    "dataCoverage": "partial",
+    "assessmentHash": "0xassessment_demo_moderate_001_hash"
+  }
+}

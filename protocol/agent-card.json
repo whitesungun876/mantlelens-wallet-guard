@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "a2a.agent_card.v1",
+  "id": "mantlelens-wallet-guard-demo",
+  "name": "MantleLens Wallet Guard",
+  "version": "0.10.0",
+  "description": "Scans Mantle wallet approvals, suspicious transfers, portfolio concentration, DeFi stub, and RWA/yield exposure with evidence-bound explanations.",
+  "url": "http://127.0.0.1:8765",
+  "provider": {
+    "name": "MantleLens",
+    "url": "http://127.0.0.1:8765"
+  },
+  "defaultInputModes": [
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "scan_wallet_risk",
+      "name": "Scan Wallet Risk",
+      "description": "Return wallet risk score, top risks, evidence bundle, and trace for a Mantle demo fixture."
+    },
+    {
+      "id": "detect_approval_risk",
+      "name": "Detect Approval Risk",
+      "description": "Return active approval risk items confirmed by allowance."
+    },
+    {
+      "id": "detect_suspicious_transfers",
+      "name": "Detect Suspicious Transfers",
+      "description": "Return suspicious recent transfer candidates from bounded known-token logs."
+    },
+    {
+      "id": "score_portfolio_exposure",
+      "name": "Score Portfolio Exposure",
+      "description": "Return known-token portfolio concentration and Mantle yield exposure."
+    },
+    {
+      "id": "score_rwa_yield_risk",
+      "name": "Score RWA/Yield Risk",
+      "description": "Return USDY/mUSD/mETH/cmETH risk context where available."
+    },
+    {
+      "id": "build_evidence_bundle",
+      "name": "Build Evidence Bundle",
+      "description": "Return evidence items and evidence bundle hash for an assessment."
+    },
+    {
+      "id": "get_benchmark_history",
+      "name": "Get Benchmark History",
+      "description": "Return local benchmark records for a wallet hash."
+    }
+  ],
+  "security": {
+    "viewOnly": true,
+    "simulationOnly": true,
+    "realExecutionAllowed": false
+  }
+}
