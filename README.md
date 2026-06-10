@@ -4,16 +4,10 @@ Mantle-first AI wallet risk intelligence agent, built on an adapter-ready EVM ri
 
 ## Live Demo in 60 Seconds
 
-<video
-  src="artifacts/demo-video/mantlelens_demo.webm"
-  poster="artifacts/demo-video/mantlelens_demo_poster.png"
-  controls
-  width="100%">
-  Your browser does not support embedded video. Open the demo video here:
-  artifacts/demo-video/mantlelens_demo.webm
-</video>
+[![Watch the MantleLens 60-second demo](artifacts/demo-video/mantlelens_demo_poster.png)](https://app-ten-orpin-62.vercel.app/demo-video/)
 
-[Open / download the WebM demo video](artifacts/demo-video/mantlelens_demo.webm)
+[Watch the demo video in browser](https://app-ten-orpin-62.vercel.app/demo-video/)  
+[Open the WebM file directly](https://app-ten-orpin-62.vercel.app/demo-video/mantlelens_demo.webm)
 
 Manual proof check:
 
