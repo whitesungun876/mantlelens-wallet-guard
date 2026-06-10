@@ -1629,16 +1629,25 @@ function MantleNativeSignalsPanel({ data, providerStatus }: { data: ScanResponse
 function PreScanSummary() {
   return (
     <div className="view-grid summary-grid pre-scan-summary">
-      <section className="panel span-all prescan-empty-panel" data-testid="assessment-hero">
-        <div>
-          <h2>No wallet scanned yet.</h2>
-          <p>Run a demo scenario or live read-only scan to generate approval, transfer, yield, and source-coverage risk signals.</p>
-        </div>
-        <div className="prescan-empty-strip" aria-label="What the scan checks">
-          <span>Approval anomalies</span>
-          <span>Suspicious transfers</span>
-          <span>Mantle yield exposure</span>
-          <span>Evidence bundle</span>
+      <section className="panel span-all prescan-hero-panel" data-testid="assessment-hero">
+        <div className="prescan-hero-body">
+          <div className="prescan-hero-left">
+            <span className="prescan-step-label">Ready for assessment</span>
+            <h2 className="prescan-hero-title">Scan a Mantle wallet before signing or interacting.</h2>
+            <p className="prescan-hero-desc">
+              Start with a guided demo scenario or run a read-only Mantle Sepolia scan. The agent binds risk signals to evidence,
+              keeps missing data unknown, and can verify an assessment proof after a scan.
+            </p>
+            <div className="prescan-checklist" aria-label="What the scan checks">
+              <span className="prescan-check"><CheckCircle2 size={14} />Approval anomalies</span>
+              <span className="prescan-check"><CheckCircle2 size={14} />Suspicious transfers</span>
+              <span className="prescan-check"><CheckCircle2 size={14} />Mantle token context</span>
+              <span className="prescan-check"><CheckCircle2 size={14} />Evidence-bound proof</span>
+            </div>
+          </div>
+          <div className="prescan-score-col">
+            <span className="prescan-awaiting">Awaiting scan result</span>
+          </div>
         </div>
       </section>
     </div>

@@ -4,10 +4,9 @@ Mantle-first AI wallet risk intelligence agent, built on an adapter-ready EVM ri
 
 ## Live Demo in 60 Seconds
 
-[![Watch the MantleLens 60-second demo](artifacts/demo-video/mantlelens_demo_poster.png)](https://app-ten-orpin-62.vercel.app/demo-video/)
-
-[Watch the demo video in browser](https://app-ten-orpin-62.vercel.app/demo-video/)  
-[Open the WebM file directly](https://app-ten-orpin-62.vercel.app/demo-video/mantlelens_demo.webm)
+- [Watch the demo video in browser](https://app-ten-orpin-62.vercel.app/demo-video/)
+- [Open the WebM file directly](https://app-ten-orpin-62.vercel.app/demo-video/mantlelens_demo.webm)
+- Proof tx: [Mantlescan AssessmentRecorded transaction](https://sepolia.mantlescan.xyz/tx/0x00caf7c1017fd8a692cd166f6d69c12c530a415f375f9cd0c66010b270e1d369)
 
 Manual proof check:
 
@@ -37,8 +36,12 @@ Manual proof check:
 | AssessmentLogger | `0x88507ca2ebcf3c3469fbd6b1085b01b6c147c06c` |
 | Verified assessment tx | `0x00caf7c1017fd8a692cd166f6d69c12c530a415f375f9cd0c66010b270e1d369` |
 | Event | `AssessmentRecorded` |
-| Known assessment hash | `0xbca30db3a6348665908834af5c9f31a066fee6dfaac0eaa6cfd8bd4a252a5bec` |
+| Known assessment hash for the frozen demo proof | `0xbca30db3a6348665908834af5c9f31a066fee6dfaac0eaa6cfd8bd4a252a5bec` |
 | Verification status | `matched` |
+
+If a newly generated live assessment hash differs, the UI should show the current assessment as not recorded and the previous verified assessment as available.
+
+[![Watch the MantleLens demo video](artifacts/demo-video/mantlelens_demo_poster.png)](https://app-ten-orpin-62.vercel.app/demo-video/)
 
 ## What the Proof Proves / Does Not Prove
 
@@ -152,7 +155,7 @@ MantleLens does not:
 - execute real revoke in the default demo path
 - execute swap, trade, transfer, or auto-signing
 - provide investment advice
-- guarantee wallet safety
+- promise that a wallet is safe
 - claim that a scan is exhaustive when indexed sources are partial
 
 ## Local Setup
@@ -269,7 +272,7 @@ Key endpoints:
 - `POST /api/wallet/scan`
 - `GET /api/provider/status`
 - `GET /api/assessment/commit/verify`
-- `POST /api/assessment/commit`
+- `POST /api/assessment/commit` - Local/manual wallet-confirmed flows only. The public deployment does not server-sign new records.
 - `POST /api/simulation/approval`
 - `POST /api/simulation/portfolio`
 - `GET /api/wallet/history`

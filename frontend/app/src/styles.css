@@ -48,7 +48,8 @@
 body {
   margin: 0;
   background:
-    linear-gradient(180deg, #e6f2ee 0, #f4f7f5 240px, var(--bg) 100%);
+    radial-gradient(circle at 50% -80px, rgba(14, 122, 113, 0.13), transparent 390px),
+    linear-gradient(180deg, #eef6f2 0, #f7faf8 250px, var(--bg) 100%);
   overflow-x: hidden;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -292,9 +293,9 @@ pre {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
-  max-width: 1440px;
+  max-width: 1380px;
   margin: 0 auto;
-  padding: 18px 24px 24px;
+  padding: 18px 24px 36px;
 }
 
 .panel {
@@ -462,17 +463,18 @@ a:focus-visible {
 
 .scan-console {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   width: 100%;
-  max-width: 1180px;
+  max-width: 1040px;
   margin-inline: auto;
-  padding: 18px 24px 14px;
+  padding: 22px 28px 16px;
   align-items: start;
   justify-items: center;
   position: relative;
   overflow: hidden;
   background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.99) 0%, rgba(247, 252, 250, 0.97) 100%);
+    linear-gradient(160deg, rgba(255, 255, 255, 0.99) 0%, rgba(248, 253, 251, 0.98) 100%);
+  box-shadow: 0 1px 2px rgba(18, 28, 25, 0.04), 0 18px 44px rgba(18, 28, 25, 0.07);
 }
 
 .scan-console::before {
@@ -488,10 +490,10 @@ a:focus-visible {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  width: min(760px, 100%);
+  width: min(780px, 100%);
   margin-inline: auto;
   min-width: 0;
-  max-width: 760px;
+  max-width: 780px;
 }
 
 .scan-copy {
@@ -510,7 +512,7 @@ a:focus-visible {
 }
 
 .scan-copy strong {
-  font-size: var(--text-section-title);
+  font-size: 20px;
   font-weight: 750;
   line-height: 1.25;
   color: var(--ink);
@@ -542,11 +544,11 @@ a:focus-visible {
 .scan-form {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
-  width: min(760px, 100%);
+  gap: 12px;
+  width: min(780px, 100%);
   margin-inline: auto;
   min-width: 0;
-  max-width: 760px;
+  max-width: 780px;
 }
 
 .scan-fields-grid {
@@ -571,7 +573,9 @@ a:focus-visible {
 
 .scan-primary-action {
   width: 100%;
-  min-height: 42px;
+  min-height: 46px;
+  font-size: 14px;
+  letter-spacing: 0.01em;
 }
 
 .scan-action-row {
@@ -626,12 +630,12 @@ a:focus-visible {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   width: 100%;
   max-width: 100%;
-  padding: 0;
-  background: transparent;
-  border-color: transparent;
+  padding: 7px 8px;
+  background: rgba(247, 251, 249, 0.74);
+  border-color: rgba(211, 224, 218, 0.82);
 }
 
 .scenario-summary-label {
@@ -648,7 +652,7 @@ a:focus-visible {
   gap: 5px;
   min-width: 0;
   max-width: 100%;
-  padding: 3px 7px;
+  padding: 4px 8px;
   border: 1px solid #d8e4df;
   border-radius: 999px;
   background: #ffffff;
@@ -717,7 +721,7 @@ a:focus-visible {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 3px;
-  min-height: 38px;
+  min-height: 42px;
   padding: 3px;
   background: #edf4f1;
   border: 1px solid var(--line);
@@ -726,13 +730,14 @@ a:focus-visible {
 
 .segmented-control .segment {
   min-width: 0;
-  min-height: 30px;
+  min-height: 34px;
   padding: 0 9px;
   color: #53615d;
   background: transparent;
   border: 0;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 12.5px;
+  font-weight: 650;
 }
 
 .segmented-control .segment.active {
@@ -789,10 +794,10 @@ a:focus-visible {
 
 .advanced-scan-settings {
   justify-self: center;
-  width: min(760px, 100%);
+  width: min(780px, 100%);
   max-width: 100%;
-  margin-top: 2px;
-  padding-top: 8px;
+  margin-top: 0;
+  padding-top: 10px;
   border-top: 1px solid rgba(214, 224, 220, 0.72);
 }
 
@@ -836,6 +841,7 @@ a:focus-visible {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
+  width: 100%;
 }
 
 .tabs {
@@ -3390,17 +3396,19 @@ button.btn-disabled-clear:disabled svg {
 /* ─── Pre-scan hero panel ─── */
 .prescan-hero-panel {
   overflow: hidden;
-  background: linear-gradient(150deg, #f8fcfa 0%, #f2f8f5 100%);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(14, 122, 113, 0.09), transparent 260px),
+    linear-gradient(150deg, #fbfdfc 0%, #f2f8f5 100%);
   border-style: dashed;
   border-color: #c8d9d3;
 }
 
 .prescan-hero-body {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 24px;
   align-items: center;
-  padding: 24px 24px 16px;
+  padding: 26px 28px;
 }
 
 .prescan-hero-left {
@@ -3426,7 +3434,7 @@ button.btn-disabled-clear:disabled svg {
 }
 
 .prescan-hero-title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: 0;
@@ -3471,15 +3479,15 @@ button.btn-disabled-clear:disabled svg {
 .prescan-awaiting {
   display: inline-flex;
   align-items: center;
-  min-height: 22px;
-  padding: 0 10px;
-  color: #6b7a75;
-  background: #eef2f0;
-  border: 1px dashed #c0ccc7;
+  min-height: 30px;
+  padding: 0 12px;
+  color: #0f655e;
+  background: #e8f6f3;
+  border: 1px solid #bdddd7;
   border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  font-style: italic;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.92) inset;
 }
 
 .prescan-metrics {
@@ -3565,9 +3573,6 @@ button.btn-disabled-clear:disabled svg {
     grid-template-columns: 1fr;
   }
 
-  .scan-console,
-  .scan-form,
-  .workspace-nav,
   .monitor-summary,
   .demo-loop-panel,
   .mantle-native-grid,
@@ -3584,6 +3589,11 @@ button.btn-disabled-clear:disabled svg {
   .scan-console-head {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .scan-console,
+  .scan-form {
+    max-width: 100%;
   }
 
   .scan-status-pill {
@@ -3666,6 +3676,14 @@ button.btn-disabled-clear:disabled svg {
 
   .workspace {
     padding: 10px;
+  }
+
+  .scan-console {
+    padding: 18px 14px 14px;
+  }
+
+  .workspace-nav {
+    grid-template-columns: 1fr;
   }
 
   .scan-fields-grid {
